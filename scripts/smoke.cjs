@@ -31,8 +31,8 @@ async function inspect(page, viewport, suffix) {
   assert.equal(await page.locator('[data-level-panel="beginner"]').isVisible(), true);
 
   assert.match(await page.locator("#motion-prompt").innerText(), /1080 × 1920/);
-  const motionLinks = await page.locator(".motion-links a").evaluateAll((links) => links.map((link) => link.href.replace(/\/$/, "")));
-  assert.deepEqual(motionLinks, ["https://github.com/vibe-motion/skills", "https://vibe-motion.github.io"]);
+  assert.match(await page.locator("#vibe-motion").innerText(), /Z\.ONE 正在制作的原创模块/);
+  assert.equal(await page.locator("#vibe-motion a[href*='vibe-motion']").count(), 0);
 
   await page.locator("#clinic-user").fill("第一次打开产品的新用户");
   await page.locator("#clinic-task").fill("找到并开始生成");

@@ -2,7 +2,7 @@
 
 Z.ONE 的前端整合入口，先把三个现有方向放进同一套清晰的信息架构：
 
-1. **AI造物社**：课程、活动和共同创作。当前开放 Eazo 首作课、Codex 创作课与 Vibe Motion 重点模块。
+1. **AI造物社**：课程、活动和共同创作。当前开放 Eazo 首作课与 Codex 创作课；Vibe Motion 是正在制作的 Z.ONE 原创重点模块。
 2. **造物门诊**：基于 Z1 Interaction Review 的输入与诊断逻辑，展示截图、截图组、录屏三种证据入口。
 3. **设计资源库**：基于 ZONE Design 的任务式资源发现方法，提供精选灵感和工具入口。
 
@@ -34,4 +34,4 @@ NODE_PATH=/path/to/playwright/node_modules node scripts/smoke.cjs
 - [AI造物社 Codex 创作课](https://ai-zaowushe-codex-course.pages.dev/)
 - [AI造物社 Eazo 首作课](https://ai-zaowushe-creator-course.pages.dev/)
 - [ZONE Design](https://zone-design.tlabel-optimus-workbench-clone.workers.dev/)
-- [Vibe Motion Skills](https://github.com/vibe-motion/skills)
+- Vibe Motion：Z.ONE 原创模块，正在制作，暂未开放下载
