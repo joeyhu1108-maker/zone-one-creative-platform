@@ -43,6 +43,10 @@ async function inspectHome(page, viewport, suffix) {
     const canvas = document.querySelector("#particle-earth");
     return canvas?.dataset.earthReady === "true" || document.querySelector(".story-sticky")?.classList.contains("earth-failed");
   });
+  assert.equal(await page.locator(".story-media img").count(), 0);
+  assert.equal(await page.locator(".story-particle-canvas").count(), 3);
+  await page.waitForFunction(() => [...document.querySelectorAll(".story-particle-canvas")]
+    .every((canvas) => canvas.dataset.particleReady === "true"));
   await page.locator('[data-filter="motion"]').click();
   assert.equal(await page.locator("[data-kind]:visible").count(), 1);
   await page.locator('[data-filter="all"]').click();
