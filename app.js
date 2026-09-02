@@ -6,11 +6,42 @@ const root = document.documentElement;
 const header = $(".site-header");
 const cursor = $(".cursor-dot");
 const heroObject = $(".hero-object");
+const scrollStory = $(".scroll-story");
+const storyCopies = $$('[data-story-copy]');
+const storyMedia = $$('[data-story-media]');
+const storyRail = $$(".story-rail i");
+const storyNumber = $("[data-story-number]");
+let activeStoryStep = -1;
+
+function updateStoryState() {
+  if (!scrollStory) return;
+  const bounds = scrollStory.getBoundingClientRect();
+  const travel = Math.max(1, bounds.height - innerHeight);
+  const progress = Math.min(1, Math.max(0, -bounds.top / travel));
+  const step = Math.min(storyCopies.length - 1, Math.floor(progress * storyCopies.length));
+  const stepProgress = progress * storyCopies.length - step;
+  scrollStory.style.setProperty("--story-shift", `${(stepProgress - .5) * -18}px`);
+  if (step === activeStoryStep) return;
+  activeStoryStep = step;
+  scrollStory.dataset.step = String(step);
+  if (storyNumber) storyNumber.textContent = String(step + 1).padStart(2, "0");
+  storyCopies.forEach((node, index) => {
+    const active = index === step;
+    node.classList.toggle("is-active", active);
+    node.setAttribute("aria-hidden", String(!active));
+  });
+  storyMedia.forEach((node) => node.classList.toggle("is-active", Number(node.dataset.storyMedia) === step));
+  storyRail.forEach((node, index) => {
+    node.classList.toggle("is-active", index === step);
+    node.classList.toggle("is-past", index < step);
+  });
+}
 
 function updateScrollState() {
   const max = document.documentElement.scrollHeight - innerHeight;
   root.style.setProperty("--scroll", max > 0 ? scrollY / max : 0);
   header?.classList.toggle("is-scrolled", scrollY > 36);
+  updateStoryState();
 }
 
 addEventListener("scroll", updateScrollState, { passive: true });
@@ -30,13 +61,13 @@ if (matchMedia("(pointer: fine)").matches) {
     }
   }, { passive: true });
 
-  $$('a, button, input, label').forEach((node) => {
+  $$('a, button, input, label, canvas[tabindex]').forEach((node) => {
     node.addEventListener("pointerenter", () => cursor.classList.add("is-active"));
     node.addEventListener("pointerleave", () => cursor.classList.remove("is-active"));
   });
 }
 
-const revealTargets = $$(".section-head, .door, .feed-card, .school-brand, .level-tabs, .level-panel, .motion-heading, .motion-demo, .motion-workflow, .clinic-form, .clinic-report, .resource-search, .resource-card, .membership > *, footer > *");
+const revealTargets = $$(".about-intro > *, .about-belief > *, .about-pillars article, .about-method, .section-head, .door, .feed-card, .school-brand, .level-tabs, .level-panel, .motion-heading, .motion-demo, .motion-workflow, .clinic-form, .clinic-report, .resource-search, .resource-card, .membership > *, footer > *");
 revealTargets.forEach((node) => node.classList.add("reveal"));
 
 if (reducedMotion) {

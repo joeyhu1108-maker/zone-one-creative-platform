@@ -9,6 +9,7 @@
   <link rel="icon" href="assets/ai-zaowushe-logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
   <script src="app.js" defer></script>
+  <script type="module" src="particle-story.js"></script>
 </head>
 <body>
   <div class="scroll-progress" aria-hidden="true"></div>
@@ -23,6 +24,7 @@
       <strong>Z.ONE</strong><span>创意实践与学习平台</span>
     </a>
     <nav aria-label="主导航">
+      <a href="#about">关于 Z.ONE</a>
       <a href="#feed">正在发生</a>
       <a href="#school">AI造物社</a>
       <a href="#clinic">造物门诊</a>
@@ -51,10 +53,73 @@
         <div class="object-core"><b>想</b><b>做</b><b>看</b><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span></div>
         <div class="object-caption"><span>MOVE YOUR CURSOR</span><b>进入创作现场 ↘</b></div>
       </div>
-      <a class="hero-scroll" href="#platform-map"><span>SCROLL TO EXPLORE</span><i></i></a>
+      <a class="hero-scroll" href="#about"><span>SCROLL TO EXPLORE</span><i></i></a>
     </section>
 
     <div class="kinetic-strip" aria-hidden="true"><div><span>IDEA INTO FORM</span><i>✦</i><span>MAKE SOMETHING REAL</span><i>✦</i><span>AI CREATOR FIELD</span><i>✦</i><span>IDEA INTO FORM</span><i>✦</i><span>MAKE SOMETHING REAL</span><i>✦</i></div></div>
+
+    <section class="scroll-story" id="about" aria-labelledby="story-title">
+      <div class="story-sticky">
+        <canvas id="particle-earth" data-earth-variant="system" tabindex="0" aria-busy="true" aria-label="可拖动的点阵地球；方向键也可以旋转"></canvas>
+        <div class="story-media" aria-hidden="true">
+          <figure data-story-media="1"><img src="assets/story/field-sharing.jpg" alt="" loading="lazy"></figure>
+          <figure data-story-media="2"><img src="assets/story/artist-h5.jpg" alt="" loading="lazy"></figure>
+          <figure data-story-media="3"><img src="assets/story/gesture-neon.webp" alt="" loading="lazy"></figure>
+        </div>
+        <div class="story-shade" aria-hidden="true"></div>
+        <div class="story-meta">
+          <span>Z.ONE / SCROLL STORY</span>
+          <span><b data-story-number>01</b> / 04</span>
+        </div>
+        <div class="story-copy">
+          <article class="is-active" data-story-copy="0" aria-hidden="false">
+            <p class="overline">00 / WHY WE EXIST</p>
+            <h2 id="story-title"><span>AI 把距离缩短。</span><span>判断决定去哪里。</span></h2>
+            <p>工具可以快速生成，但一件作品仍然需要人的观察、审美与选择。Z.ONE 做的，是把这些判断带进真实制作。</p>
+          </article>
+          <article data-story-copy="1" aria-hidden="true">
+            <p class="overline">01 / OBSERVE</p>
+            <h2><span>从一个真实的人，</span><span>和真实场景开始。</span></h2>
+            <p>我们先看谁在使用、他身处什么情境、什么感受值得被看见，再决定作品应该是什么。</p>
+          </article>
+          <article data-story-copy="2" aria-hidden="true">
+            <p class="overline">02 / MAKE</p>
+            <h2><span>把模糊想法，</span><span>做成能打开的</span><span>作品。</span></h2>
+            <p>网站、H5、互动装置与动态影像，都要从概念走到可操作、可验证、可分享的结果。</p>
+          </article>
+          <article data-story-copy="3" aria-hidden="true">
+            <p class="overline">03 / SHARE</p>
+            <h2><span>再把一次经验，</span><span>变成更多人的</span><span>方法。</span></h2>
+            <p>AI造物社、造物门诊和设计资源库，让创作经验继续进入课程、诊断与共同实践。</p>
+          </article>
+        </div>
+        <div class="story-rail" aria-label="滚动叙事进度">
+          <i class="is-active"></i><i></i><i></i><i></i>
+        </div>
+        <p class="story-hint">滚动推进 · 拖动地球探索</p>
+      </div>
+    </section>
+
+    <section class="about-detail" aria-labelledby="about-title">
+      <div class="about-intro">
+        <p class="overline">ABOUT Z.ONE / 关于我们</p>
+        <h2 id="about-title"><span>让好想法，</span><span>真正发生。</span></h2>
+        <p class="about-lead">Z.ONE 是一个围绕 AI 创作、体验设计与创作者学习展开的独立创意实践平台。我们从真实的人和真实任务出发，把模糊的想法整理成可以打开、操作、验证和分享的作品。</p>
+      </div>
+      <div class="about-belief">
+        <span>OUR BELIEF</span>
+        <p>AI 加快执行，人的观察、判断与品位决定什么值得被做出来。我们关心技术，也更关心作品是否回应真实需要，是否让人愿意进入、理解并继续使用。</p>
+      </div>
+      <div class="about-pillars">
+        <article><span>01 / LEARN</span><h3>AI造物社</h3><p>面向第一次使用 AI 工具的人、持续使用 Codex 的创作者和设计师。通过课程、活动与共同制作，让参与者先完成第一件真实作品，再逐步建立自己的方法。</p><a href="#school">看课程路线 ↓</a></article>
+        <article><span>02 / REVIEW</span><h3>造物门诊</h3><p>从一张页面、一个关键任务和真实操作证据开始，找出最影响体验的三个问题，给出修改方向与复测标准，让项目在交付之前变得更清楚。</p><a href="#clinic">开始一次预诊 ↓</a></article>
+        <article><span>03 / BUILD</span><h3>创意与体验实践</h3><p>把艺术、教育、社区与技术连接起来，制作网站、H5、互动体验和动态内容。每个项目都从问题与场景出发，最后回到可使用的成果。</p><a href="#feed">看正在发生 ↓</a></article>
+      </div>
+      <div class="about-method">
+        <span>THE Z.ONE METHOD</span>
+        <ol><li><b>01</b>观察真实的人</li><li><b>02</b>判断核心问题</li><li><b>03</b>做出可用作品</li><li><b>04</b>用证据验收</li><li><b>05</b>分享成为方法</li></ol>
+      </div>
+    </section>
 
     <section class="platform-map" id="platform-map" aria-labelledby="map-title">
       <div class="section-head compact">

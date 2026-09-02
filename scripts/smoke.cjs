@@ -16,9 +16,23 @@ async function inspect(page, viewport, suffix) {
   assert.match(text, /造物门诊/);
   assert.match(text, /设计资源库/);
   assert.match(text, /Vibe Motion/);
+  assert.match(text, /让好想法，\s*真正发生/);
+  assert.match(text, /AI 加快执行/);
   assert.equal(await page.locator(".door").count(), 3);
   assert.equal(await page.locator(".level-tab").count(), 3);
   assert.equal(await page.locator(".resource-card").count(), 6);
+  assert.equal(await page.locator("[data-story-copy]").count(), 4);
+
+  await page.waitForFunction(() => {
+    const canvas = document.querySelector("#particle-earth");
+    return canvas?.dataset.earthReady === "true" || document.querySelector(".story-sticky")?.classList.contains("earth-failed");
+  });
+  await page.evaluate(() => {
+    const story = document.querySelector(".scroll-story");
+    scrollTo(0, story.offsetTop + (story.offsetHeight - innerHeight) * .7);
+  });
+  await page.waitForTimeout(80);
+  assert.equal(await page.locator(".scroll-story").getAttribute("data-step"), "2");
 
   await page.locator('[data-filter="motion"]').click();
   assert.equal(await page.locator('[data-kind]:visible').count(), 1);
@@ -53,6 +67,7 @@ async function inspect(page, viewport, suffix) {
   assert.ok(overflow <= 1, `horizontal overflow should be absent, got ${overflow}px`);
 
   await page.screenshot({ path: path.join(outputDir, `zone-one-${suffix}.png`), fullPage: true });
+  await page.locator(".story-sticky").screenshot({ path: path.join(outputDir, `zone-one-story-${suffix}.png`) });
   await page.locator("#vibe-motion").screenshot({ path: path.join(outputDir, `zone-one-motion-${suffix}.png`) });
 }
 
