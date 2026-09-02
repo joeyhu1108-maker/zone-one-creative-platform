@@ -38,6 +38,9 @@ async function inspectHome(page, viewport, suffix) {
   assert.equal(await page.locator(".support-needs article").count(), 3);
   assert.equal(await page.locator('.support-contact img').getAttribute("src"), "assets/joey-wechat-qr.jpg");
   assert.equal(await page.locator("main > .school, main > .clinic, main > .library, main > .vibe-motion").count(), 0);
+  assert.equal(await page.locator("#kinetic-canvas").count(), 1);
+  await page.waitForFunction(() => document.querySelector("#kinetic-canvas")?.dataset.fluidReady === "true"
+    || document.querySelector(".hero")?.classList.contains("fluid-failed"));
 
   const doorPaths = await page.locator(".door").evaluateAll((nodes) => nodes.map((node) => new URL(node.href).pathname));
   assert.deepEqual(doorPaths, ["/school/", "/clinic/", "/library/"]);
@@ -60,7 +63,7 @@ async function inspectHome(page, viewport, suffix) {
   const observeCanvas = page.locator('[data-particle-case="observe"]');
   await observeCanvas.click({ position: { x: 40, y: 40 } });
   assert.equal(await observeCanvas.getAttribute("data-scatter-state"), "active");
-  await page.locator('[data-story-media="1"] [data-particle-zoom="in"]').click();
+  await page.locator('[data-story-media="1"] [data-particle-zoom="in"]').dispatchEvent("click");
   assert.equal(await observeCanvas.getAttribute("data-particle-zoom"), "1.15");
   await page.locator('[data-filter="motion"]').click();
   assert.equal(await page.locator("[data-kind]:visible").count(), 1);

@@ -5,7 +5,6 @@ const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matc
 const root = document.documentElement;
 const header = $(".site-header");
 const cursor = $(".cursor-dot");
-const heroObject = $(".hero-object");
 const scrollStory = $(".scroll-story");
 const storyCopies = $$('[data-story-copy]');
 const storyMedia = $$('[data-story-media]');
@@ -54,11 +53,6 @@ if (matchMedia("(pointer: fine)").matches) {
     cursor.style.transform = `translate3d(${x - cursor.offsetWidth / 2}px, ${y - cursor.offsetHeight / 2}px, 0)`;
     root.style.setProperty("--mx", `${(x / innerWidth) * 100}%`);
     root.style.setProperty("--my", `${(y / innerHeight) * 100}%`);
-    if (heroObject && y < innerHeight) {
-      const tiltX = ((y / innerHeight) - .5) * -9;
-      const tiltY = ((x / innerWidth) - .5) * 11;
-      heroObject.style.transform = `translateY(-50%) perspective(900px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
-    }
   }, { passive: true });
 
   $$('a, button, input, label, canvas[tabindex]').forEach((node) => {
@@ -86,81 +80,172 @@ if (reducedMotion) {
 function startKineticField() {
   const canvas = $("#kinetic-canvas");
   if (!canvas) return;
-  const context = canvas.getContext("2d", { alpha: false });
-  let width = 0;
-  let height = 0;
-  let pixelRatio = 1;
-  const pointer = { x: .72, y: .44, tx: .72, ty: .44 };
+  const hero = canvas.closest(".hero");
+  const gl = canvas.getContext("webgl", { antialias: false, alpha: false, depth: false })
+    || canvas.getContext("experimental-webgl");
+  if (!gl) {
+    hero?.classList.add("fluid-failed");
+    return;
+  }
+
+  const vertexSource = `
+    attribute vec2 aPos;
+    void main() { gl_Position = vec4(aPos, 0.0, 1.0); }
+  `;
+  const fragmentSource = `
+    precision highp float;
+    uniform vec2 uRes;
+    uniform vec2 uPointer;
+    uniform float uTime;
+
+    float hash(vec2 p) {
+      p = fract(p * vec2(123.34, 456.21));
+      p += dot(p, p + 45.32);
+      return fract(p.x * p.y);
+    }
+    float noise(vec2 p) {
+      vec2 i = floor(p), f = fract(p);
+      vec2 u = f * f * (3.0 - 2.0 * f);
+      float a = hash(i), b = hash(i + vec2(1.0, 0.0));
+      float c = hash(i + vec2(0.0, 1.0)), d = hash(i + vec2(1.0, 1.0));
+      return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+    }
+    float fbm(vec2 p) {
+      float value = 0.0, amplitude = 0.5;
+      for (int i = 0; i < 4; i++) {
+        value += amplitude * noise(p);
+        p = p * 2.03 + vec2(1.7, 9.2);
+        amplitude *= 0.5;
+      }
+      return value;
+    }
+    float caustic(vec2 uv, float time) {
+      vec2 p = mod(uv * 6.28318, 6.28318) - 250.0;
+      vec2 i = p;
+      float c = 1.0;
+      float intensity = 0.0045;
+      for (int n = 0; n < 4; n++) {
+        float t = time * 0.42 * (1.0 - 3.0 / float(n + 1));
+        i = p + vec2(cos(t - i.x) + sin(t + i.y), sin(t - i.y) + cos(t + i.x));
+        c += 1.0 / length(vec2(p.x / (sin(i.x + t) / intensity), p.y / (cos(i.y + t) / intensity)));
+      }
+      c /= 4.0;
+      c = 1.17 - pow(c, 1.4);
+      return pow(abs(c), 7.0);
+    }
+    void main() {
+      vec2 frag = gl_FragCoord.xy / uRes.xy;
+      vec2 uv = frag;
+      uv.x *= uRes.x / uRes.y;
+      float focus = smoothstep(0.62, 0.0, distance(frag, uPointer));
+      uv += (uPointer - 0.5) * focus * 0.10;
+      float time = uTime * 0.8;
+      vec2 q = uv * 1.5;
+      float w1 = fbm(q + vec2(0.0, time * 0.08));
+      float w2 = fbm(q * 1.3 + vec2(time * 0.05, -time * 0.04) + 4.0);
+      vec2 warp = vec2(w1, w2) - 0.5;
+      float body = clamp(w1 * 0.6 + w2 * 0.4, 0.0, 1.0);
+      float light = caustic(uv * 2.8 + warp * 0.7, time);
+      vec3 deep = vec3(0.006, 0.018, 0.010);
+      vec3 mid = vec3(0.018, 0.105, 0.060);
+      vec3 glow = vec3(0.10, 0.84, 0.48);
+      vec3 hot = vec3(0.91, 1.0, 0.55);
+      vec3 cool = vec3(0.32, 0.95, 0.62);
+      vec3 color = mix(deep, mid, smoothstep(0.05, 0.8, body));
+      color = mix(color, glow, smoothstep(0.2, 0.95, light));
+      color += mix(glow, cool, smoothstep(0.3, 0.8, body)) * light * 0.5;
+      color += hot * pow(light, 4.0) * (0.66 + focus * 0.22);
+      vec2 poolCenter = mix(vec2(0.68, 0.44), uPointer, 0.18);
+      color *= mix(0.42, 1.12, smoothstep(1.3, 0.1, length(frag - poolCenter)));
+      color = color / (color + 0.8);
+      color = pow(color, vec3(0.85));
+      gl_FragColor = vec4(color, 1.0);
+    }
+  `;
+
+  function compile(type, source) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (gl.getShaderParameter(shader, gl.COMPILE_STATUS)) return shader;
+    gl.deleteShader(shader);
+    return null;
+  }
+
+  const vertexShader = compile(gl.VERTEX_SHADER, vertexSource);
+  const fragmentShader = compile(gl.FRAGMENT_SHADER, fragmentSource);
+  if (!vertexShader || !fragmentShader) {
+    hero?.classList.add("fluid-failed");
+    return;
+  }
+
+  const program = gl.createProgram();
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
+  gl.linkProgram(program);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    hero?.classList.add("fluid-failed");
+    return;
+  }
+  gl.useProgram(program);
+  const buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const position = gl.getAttribLocation(program, "aPos");
+  gl.enableVertexAttribArray(position);
+  gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+
+  const resolution = gl.getUniformLocation(program, "uRes");
+  const timeUniform = gl.getUniformLocation(program, "uTime");
+  const pointerUniform = gl.getUniformLocation(program, "uPointer");
+  const pointer = { x: .74, y: .48, tx: .74, ty: .48 };
+  let frame = 0;
+  let start = performance.now();
 
   function resize() {
-    const rect = canvas.getBoundingClientRect();
-    pixelRatio = Math.min(devicePixelRatio || 1, 1.7);
-    width = rect.width;
-    height = rect.height;
-    canvas.width = Math.round(width * pixelRatio);
-    canvas.height = Math.round(height * pixelRatio);
-    context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    const width = hero.clientWidth;
+    const height = hero.clientHeight;
+    const scale = Math.min(.68, 980 / Math.max(width, 1));
+    canvas.width = Math.max(2, Math.round(width * scale));
+    canvas.height = Math.max(2, Math.round(height * scale));
+    gl.viewport(0, 0, canvas.width, canvas.height);
   }
 
-  canvas.closest(".hero")?.addEventListener("pointermove", (event) => {
-    const rect = canvas.getBoundingClientRect();
+  function render(seconds) {
+    pointer.x += (pointer.tx - pointer.x) * .035;
+    pointer.y += (pointer.ty - pointer.y) * .035;
+    gl.uniform2f(resolution, canvas.width, canvas.height);
+    gl.uniform2f(pointerUniform, pointer.x, pointer.y);
+    gl.uniform1f(timeUniform, seconds);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    canvas.dataset.fluidReady = "true";
+  }
+
+  function loop(now) {
+    render((now - start) / 1000);
+    frame = requestAnimationFrame(loop);
+  }
+
+  hero?.addEventListener("pointermove", (event) => {
+    const rect = hero.getBoundingClientRect();
     pointer.tx = (event.clientX - rect.left) / rect.width;
-    pointer.ty = (event.clientY - rect.top) / rect.height;
+    pointer.ty = 1 - (event.clientY - rect.top) / rect.height;
   }, { passive: true });
-
-  function draw(time = 0) {
-    const seconds = time * .001;
-    pointer.x += (pointer.tx - pointer.x) * .025;
-    pointer.y += (pointer.ty - pointer.y) * .025;
-    context.fillStyle = "#090c08";
-    context.fillRect(0, 0, width, height);
-
-    const halo = context.createRadialGradient(pointer.x * width, pointer.y * height, 0, pointer.x * width, pointer.y * height, Math.max(width, height) * .62);
-    halo.addColorStop(0, "rgba(163,255,25,.20)");
-    halo.addColorStop(.36, "rgba(87,132,36,.07)");
-    halo.addColorStop(1, "rgba(9,12,8,0)");
-    context.fillStyle = halo;
-    context.fillRect(0, 0, width, height);
-
-    context.globalCompositeOperation = "lighter";
-    const bands = width < 700 ? 11 : 18;
-    for (let band = 0; band < bands; band += 1) {
-      const depth = band / (bands - 1);
-      const base = height * (.16 + depth * .77);
-      const amplitude = height * (.055 + Math.sin(depth * Math.PI) * .105);
-      context.beginPath();
-      for (let x = -40; x <= width + 40; x += 14) {
-        const normalized = x / width;
-        const pull = Math.exp(-Math.pow(normalized - pointer.x, 2) * 10);
-        const wave = Math.sin(normalized * 8.2 + seconds * (.34 + depth * .22) + band * .48);
-        const cross = Math.sin(normalized * 2.1 - seconds * .19 + band) * height * .045;
-        const y = base + wave * amplitude + cross + (pointer.y - .5) * pull * height * .24;
-        if (x === -40) context.moveTo(x, y);
-        else context.lineTo(x, y);
-      }
-      context.strokeStyle = band % 4 === 0 ? `rgba(210,255,92,${.2 + depth * .28})` : `rgba(227,240,210,${.035 + depth * .075})`;
-      context.lineWidth = band % 4 === 0 ? 1.2 : .7;
-      context.stroke();
+  addEventListener("resize", () => {
+    resize();
+    if (reducedMotion) render(11.5);
+  }, { passive: true });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) cancelAnimationFrame(frame);
+    else if (!reducedMotion) {
+      start = performance.now();
+      frame = requestAnimationFrame(loop);
     }
+  });
 
-    for (let index = 0; index < 58; index += 1) {
-      const seed = index * 12.9898;
-      const x = ((Math.sin(seed) * 43758.5453) % 1 + 1) % 1;
-      const y = ((Math.sin(seed * 1.71) * 24634.6345) % 1 + 1) % 1;
-      const drift = Math.sin(seconds * .35 + seed) * 16;
-      const radius = index % 13 === 0 ? 2.1 : .65;
-      context.beginPath();
-      context.arc(x * width + drift, y * height, radius, 0, Math.PI * 2);
-      context.fillStyle = index % 13 === 0 ? "rgba(205,255,78,.72)" : "rgba(237,241,224,.18)";
-      context.fill();
-    }
-    context.globalCompositeOperation = "source-over";
-    if (!reducedMotion) requestAnimationFrame(draw);
-  }
-
-  addEventListener("resize", resize, { passive: true });
   resize();
-  draw();
+  if (reducedMotion) render(11.5);
+  else frame = requestAnimationFrame(loop);
 }
 
 startKineticField();
