@@ -1,5 +1,7 @@
 # Z.ONE Creative Platform
 
+公网入口：<https://zone-one-creative-platform.joeyhu1108.workers.dev/>
+
 Z.ONE 的前端整合入口，先把三个现有方向放进同一套清晰的信息架构：
 
 1. **AI造物社**：课程、活动和共同创作。当前开放 Eazo 首作课与 Codex 创作课；Vibe Motion 是正在制作的 Z.ONE 原创重点模块。
