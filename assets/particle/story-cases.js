@@ -42,11 +42,13 @@ function pointMaterial(size = 2.25, opacity = 0.9) {
       uSize: { value: size },
       uOpacity: { value: opacity },
       uTime: { value: 0 },
+      uScatter: { value: 0 },
     },
     vertexShader: `
       uniform float uPixelRatio;
       uniform float uSize;
       uniform float uTime;
+      uniform float uScatter;
       attribute float aScale;
       attribute float aPhase;
       varying vec3 vColor;
@@ -55,7 +57,9 @@ function pointMaterial(size = 2.25, opacity = 0.9) {
       void main() {
         vColor = color;
         vGlow = 0.78 + 0.22 * sin(uTime * 1.45 + aPhase);
-        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+        vec3 scatterDirection = normalize(position + vec3(sin(aPhase), cos(aPhase * 1.37), sin(aPhase * 0.73)) * 0.42);
+        vec3 displaced = position + scatterDirection * uScatter * (0.42 + aScale * 0.62);
+        vec4 mvPosition = modelViewMatrix * vec4(displaced, 1.0);
         gl_Position = projectionMatrix * mvPosition;
         gl_PointSize = clamp(uSize * uPixelRatio * aScale * (4.8 / max(1.0, -mvPosition.z)), 1.0, 5.8);
       }
@@ -266,11 +270,13 @@ function createMakeScene(isMobile) {
       uPixelRatio: { value: Math.min(window.devicePixelRatio || 1, 1.35) },
       uTime: { value: 0 },
       uMorph: { value: 0 },
+      uScatter: { value: 0 },
     },
     vertexShader: `
       uniform float uPixelRatio;
       uniform float uTime;
       uniform float uMorph;
+      uniform float uScatter;
       attribute vec3 aTarget;
       attribute float aScale;
       attribute float aPhase;
@@ -285,6 +291,8 @@ function createMakeScene(isMobile) {
         vec3 formed = aTarget;
         formed.z += sin(uTime * 0.75 + aPhase) * 0.012;
         vec3 current = mix(cloud, formed, eased);
+        vec3 scatterDirection = normalize(current + vec3(sin(aPhase), cos(aPhase * 1.37), sin(aPhase * 0.73)) * 0.42);
+        current += scatterDirection * uScatter * (0.42 + aScale * 0.62);
         vec4 mvPosition = modelViewMatrix * vec4(current, 1.0);
         gl_Position = projectionMatrix * mvPosition;
         gl_PointSize = clamp(2.35 * uPixelRatio * aScale * (4.8 / max(1.0, -mvPosition.z)), 1.0, 5.5);
@@ -451,6 +459,11 @@ export async function mountStoryParticles(canvas) {
   let destroyed = false;
   let active = false;
   let activeSince = performance.now();
+  let scatterStarted = -Infinity;
+  let reducedScatter = 0;
+  let zoom = 1;
+  let zoomTarget = 1;
+  const listenerController = new AbortController();
 
   const resize = () => {
     const width = Math.max(1, canvas.clientWidth);
@@ -463,12 +476,41 @@ export async function mountStoryParticles(canvas) {
     }
   };
 
+  const setScatter = (value) => {
+    caseScene.root.traverse((object) => {
+      if (object.material?.uniforms?.uScatter) object.material.uniforms.uScatter.value = value;
+    });
+  };
+
+  const updateInteraction = (timestamp) => {
+    let scatter = reducedScatter;
+    if (!reducedMotion) {
+      const elapsed = (timestamp - scatterStarted) / 1000;
+      if (elapsed >= 0 && elapsed < 0.55) {
+        const progress = elapsed / 0.55;
+        scatter = 1 - Math.pow(1 - progress, 3);
+      } else if (elapsed < 1.05) {
+        scatter = 1;
+      } else if (elapsed < 2.25) {
+        const progress = (elapsed - 1.05) / 1.2;
+        scatter = 1 - progress * progress * (3 - 2 * progress);
+      } else {
+        scatter = 0;
+      }
+    }
+    setScatter(scatter);
+    canvas.dataset.scatterState = scatter > 0.01 ? "active" : "idle";
+    zoom = reducedMotion ? zoomTarget : zoom + (zoomTarget - zoom) * 0.09;
+    caseScene.root.scale.setScalar(zoom);
+  };
+
   const render = (timestamp = performance.now()) => {
     frame = 0;
     if (destroyed || !active) return;
     resize();
     const time = reducedMotion ? 4 : Math.max(0, (timestamp - activeSince) / 1000);
     caseScene.update(time);
+    updateInteraction(timestamp);
     renderer.render(scene, camera);
     if (!reducedMotion) frame = requestAnimationFrame(render);
   };
@@ -484,6 +526,47 @@ export async function mountStoryParticles(canvas) {
     }
   };
 
+  const requestRender = () => {
+    if (active && !frame) frame = requestAnimationFrame(render);
+  };
+
+  const triggerScatter = () => {
+    if (!active) return;
+    if (reducedMotion) reducedScatter = reducedScatter > 0 ? 0 : 1;
+    else scatterStarted = performance.now();
+    canvas.dataset.scatterState = "active";
+    requestRender();
+  };
+
+  const adjustZoom = (delta) => {
+    zoomTarget = THREE.MathUtils.clamp(zoomTarget + delta, 0.7, 1.55);
+    canvas.dataset.particleZoom = zoomTarget.toFixed(2);
+    requestRender();
+  };
+
+  canvas.addEventListener("click", triggerScatter, { signal: listenerController.signal });
+  canvas.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") triggerScatter();
+    else if (event.key === "+" || event.key === "=") adjustZoom(0.15);
+    else if (event.key === "-") adjustZoom(-0.15);
+    else if (event.key === "0") {
+      zoomTarget = 1;
+      canvas.dataset.particleZoom = "1.00";
+      requestRender();
+    } else return;
+    event.preventDefault();
+  }, { signal: listenerController.signal });
+  canvas.addEventListener("wheel", (event) => {
+    if (!event.ctrlKey && !event.metaKey) return;
+    adjustZoom(event.deltaY < 0 ? 0.08 : -0.08);
+    event.preventDefault();
+  }, { passive: false, signal: listenerController.signal });
+  figure?.querySelectorAll("[data-particle-zoom]").forEach((button) => {
+    button.addEventListener("click", () => adjustZoom(button.dataset.particleZoom === "in" ? 0.15 : -0.15), {
+      signal: listenerController.signal,
+    });
+  });
+
   const resizeObserver = new ResizeObserver(() => {
     resize();
     if (active && reducedMotion) render();
@@ -494,8 +577,11 @@ export async function mountStoryParticles(canvas) {
 
   resize();
   caseScene.update(reducedMotion ? 4 : 0);
+  setScatter(0);
   renderer.render(scene, camera);
   canvas.dataset.particleReady = "true";
+  canvas.dataset.particleZoom = "1.00";
+  canvas.dataset.scatterState = "idle";
   syncActive();
 
   return {
@@ -503,6 +589,7 @@ export async function mountStoryParticles(canvas) {
       if (destroyed) return;
       destroyed = true;
       if (frame) cancelAnimationFrame(frame);
+      listenerController.abort();
       resizeObserver.disconnect();
       classObserver.disconnect();
       scene.traverse((object) => {

@@ -67,7 +67,7 @@ if (matchMedia("(pointer: fine)").matches) {
   });
 }
 
-const revealTargets = $$(".about-intro > *, .about-belief > *, .about-pillars article, .about-method, .section-head, .door, .feed-card, .school-brand, .level-tabs, .level-panel, .motion-heading, .motion-demo, .motion-workflow, .clinic-form, .clinic-report, .resource-search, .resource-card, .membership > *, footer > *");
+const revealTargets = $$(".about-intro > *, .about-belief > *, .about-pillars article, .about-method, .section-head, .door, .feed-card, .support-intro > *, .support-needs article, .support-action > *, .school-brand, .level-tabs, .level-panel, .motion-heading, .motion-demo, .motion-workflow, .clinic-form, .clinic-report, .resource-search, .resource-card, .membership > *, footer > *");
 revealTargets.forEach((node) => node.classList.add("reveal"));
 
 if (reducedMotion) {

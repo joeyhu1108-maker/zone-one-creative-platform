@@ -33,7 +33,10 @@ async function inspectHome(page, viewport, suffix) {
   assert.match(text, /设计资源库/);
   assert.match(text, /让好想法，\s*真正发生/);
   assert.match(text, /总站只负责选方向/);
+  assert.match(text, /欢迎赞助我们/);
   assert.equal(await page.locator(".door").count(), 3);
+  assert.equal(await page.locator(".support-needs article").count(), 3);
+  assert.equal(await page.locator('.support-contact img').getAttribute("src"), "assets/joey-wechat-qr.jpg");
   assert.equal(await page.locator("main > .school, main > .clinic, main > .library, main > .vibe-motion").count(), 0);
 
   const doorPaths = await page.locator(".door").evaluateAll((nodes) => nodes.map((node) => new URL(node.href).pathname));
@@ -45,8 +48,20 @@ async function inspectHome(page, viewport, suffix) {
   });
   assert.equal(await page.locator(".story-media img").count(), 0);
   assert.equal(await page.locator(".story-particle-canvas").count(), 3);
+  assert.equal(await page.locator("button[data-particle-zoom]").count(), 6);
   await page.waitForFunction(() => [...document.querySelectorAll(".story-particle-canvas")]
     .every((canvas) => canvas.dataset.particleReady === "true"));
+  await page.evaluate(() => {
+    const story = document.querySelector(".scroll-story");
+    const travel = story.offsetHeight - innerHeight;
+    scrollTo(0, story.offsetTop + travel * (1.25 / 4));
+  });
+  await page.waitForFunction(() => document.querySelector(".scroll-story")?.dataset.step === "1");
+  const observeCanvas = page.locator('[data-particle-case="observe"]');
+  await observeCanvas.click({ position: { x: 40, y: 40 } });
+  assert.equal(await observeCanvas.getAttribute("data-scatter-state"), "active");
+  await page.locator('[data-story-media="1"] [data-particle-zoom="in"]').click();
+  assert.equal(await observeCanvas.getAttribute("data-particle-zoom"), "1.15");
   await page.locator('[data-filter="motion"]').click();
   assert.equal(await page.locator("[data-kind]:visible").count(), 1);
   await page.locator('[data-filter="all"]').click();

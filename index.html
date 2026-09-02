@@ -61,17 +61,20 @@
     <section class="scroll-story" id="about" aria-labelledby="story-title">
       <div class="story-sticky">
         <canvas id="particle-earth" data-earth-variant="system" tabindex="0" aria-busy="true" aria-label="可拖动的点阵地球；方向键也可以旋转"></canvas>
-        <div class="story-media" aria-hidden="true">
-          <figure class="particle-case" data-story-media="1">
-            <canvas class="story-particle-canvas" data-particle-case="observe"></canvas>
+        <div class="story-media">
+          <figure class="particle-case" data-story-media="1" aria-label="人物与真实情境的粒子场景">
+            <canvas class="story-particle-canvas" data-particle-case="observe" tabindex="0" aria-label="点击让人物粒子散开；使用加减按钮缩放"></canvas>
+            <div class="particle-controls"><button type="button" data-particle-zoom="out" aria-label="缩小人物粒子场景">−</button><span>ZOOM</span><button type="button" data-particle-zoom="in" aria-label="放大人物粒子场景">+</button></div>
             <figcaption><span>PERSON / CONTEXT</span><b>从真实的人开始</b></figcaption>
           </figure>
-          <figure class="particle-case" data-story-media="2">
-            <canvas class="story-particle-canvas" data-particle-case="make"></canvas>
+          <figure class="particle-case" data-story-media="2" aria-label="想法形成作品的粒子场景">
+            <canvas class="story-particle-canvas" data-particle-case="make" tabindex="0" aria-label="点击让界面粒子散开；使用加减按钮缩放"></canvas>
+            <div class="particle-controls"><button type="button" data-particle-zoom="out" aria-label="缩小作品粒子场景">−</button><span>ZOOM</span><button type="button" data-particle-zoom="in" aria-label="放大作品粒子场景">+</button></div>
             <figcaption><span>IDEA → FORM</span><b>从模糊到可操作</b></figcaption>
           </figure>
-          <figure class="particle-case" data-story-media="3">
-            <canvas class="story-particle-canvas" data-particle-case="share"></canvas>
+          <figure class="particle-case" data-story-media="3" aria-label="经验扩散为方法的粒子场景">
+            <canvas class="story-particle-canvas" data-particle-case="share" tabindex="0" aria-label="点击让网络粒子散开；使用加减按钮缩放"></canvas>
+            <div class="particle-controls"><button type="button" data-particle-zoom="out" aria-label="缩小经验网络粒子场景">−</button><span>ZOOM</span><button type="button" data-particle-zoom="in" aria-label="放大经验网络粒子场景">+</button></div>
             <figcaption><span>ONE → MANY</span><b>让经验成为方法</b></figcaption>
           </figure>
         </div>
@@ -105,7 +108,7 @@
         <div class="story-rail" aria-label="滚动叙事进度">
           <i class="is-active"></i><i></i><i></i><i></i>
         </div>
-        <p class="story-hint">滚动推进 · 拖动地球探索</p>
+        <p class="story-hint"><span>滚动推进 · 拖动地球探索</span><span>点击粒子散开 · ＋/－缩放</span></p>
       </div>
     </section>
 
@@ -197,6 +200,30 @@
           <p>从作品出发，拆解参考、判断与具体制作过程。</p>
           <strong>后续持续更新</strong>
         </article>
+      </div>
+    </section>
+
+    <section class="support" id="support" aria-labelledby="support-title">
+      <div class="support-intro">
+        <p class="overline">03 / SUPPORT Z.ONE</p>
+        <h2 id="support-title"><span>一起让好想法，</span><span>真正发生。</span></h2>
+        <p>Z.ONE 与 AI造物社正在持续制作课程、活动、互动作品与开放资源。如果你认同这种从真实问题出发、把创意做成可用成果的方式，欢迎为下一次创作提供支持。</p>
+      </div>
+      <div class="support-needs" aria-label="我们需要的支持">
+        <article><span>01 / SPACE</span><h3>场地与设备</h3><p>活动空间、展示大屏、拍摄与互动设备，让课程和作品能够被真实体验。</p></article>
+        <article><span>02 / FUND</span><h3>制作经费</h3><p>用于原型开发、课程制作、网站维护，以及创作者与协作者的实际投入。</p></article>
+        <article><span>03 / PARTNER</span><h3>资源与合作</h3><p>品牌命题、专业导师、传播渠道与行业资源，让作品进入更具体的使用场景。</p></article>
+      </div>
+      <div class="support-action">
+        <div>
+          <span>WELCOME TO SPONSOR</span>
+          <h3>欢迎赞助我们</h3>
+          <p>支持可以是一笔制作经费，也可以是一处场地、一台设备或一次专业协作。合作前我们会一起确认支持内容、使用范围与对外呈现方式。</p>
+        </div>
+        <div class="support-contact">
+          <img src="assets/joey-wechat-qr.jpg" alt="添加微信沟通赞助与合作">
+          <p><b>扫码添加微信</b><span>请备注“赞助合作”</span></p>
+        </div>
       </div>
     </section>
 
