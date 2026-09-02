@@ -1,0 +1,10 @@
+{
+  "name": "zone-one-creative-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Z.ONE frontend hub for AI造物社, 造物门诊 and the design resource library.",
+  "scripts": {
+    "serve": "python3 -m http.server 8890",
+    "test": "node scripts/smoke.cjs"
+  }
+}

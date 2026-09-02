@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Z.ONE 创作入口：AI造物社课程与活动、造物门诊、设计资源库。">
+  <meta name="theme-color" content="#f1f2e8">
+  <title>Z.ONE｜把灵感做成作品</title>
+  <link rel="icon" href="assets/ai-zaowushe-logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="field-bg" aria-hidden="true">
+    <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+  </div>
+
+  <header class="site-header">
+    <a class="zone-mark" href="#top" aria-label="Z.ONE 首页">
+      <strong>Z.ONE</strong><span>创意实践与学习平台</span>
+    </a>
+    <nav aria-label="主导航">
+      <a href="#feed">正在发生</a>
+      <a href="#school">AI造物社</a>
+      <a href="#clinic">造物门诊</a>
+      <a href="#library">设计资源库</a>
+    </nav>
+    <button class="account-trigger" type="button" data-open-account>
+      <span data-account-label>登录 / 注册</span><b data-points>0 pts</b>
+    </button>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="overline">Z.ONE × AI造物社</p>
+        <h1 id="hero-title">把灵感<br>做成作品。</h1>
+        <p class="hero-lead">从学习、动手，到交付前的一次诊断。三个入口，陪你把“我有个想法”推进到真正可以打开、操作和分享的结果。</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#school">开始学习</a>
+          <a class="button ghost" href="#platform-map">先选入口 ↓</a>
+        </div>
+      </div>
+      <div class="hero-object" aria-label="从灵感到作品的动态示意">
+        <div class="object-label"><span>IDEA</span><span>WORK</span></div>
+        <div class="object-core">
+          <b>想</b><b>做</b><b>看</b>
+          <span class="orbit orbit-one"></span>
+          <span class="orbit orbit-two"></span>
+        </div>
+        <div class="object-timeline"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+    </section>
+
+    <section class="platform-map" id="platform-map" aria-labelledby="map-title">
+      <div class="section-head compact">
+        <p class="overline">01 / CHOOSE A DOOR</p>
+        <h2 id="map-title">你现在卡在哪？</h2>
+        <p>不用看完全部。选一扇门，直接进入。</p>
+      </div>
+      <div class="door-grid">
+        <a class="door door-school" href="#school">
+          <span class="door-index">01</span>
+          <div><small>LEARN & BUILD</small><h3>AI造物社</h3><p>第一次用 Eazo、Codex 或 Vibe Motion，从一条可复制的路径开始。</p></div>
+          <b>进入课程与活动 ↘</b>
+        </a>
+        <a class="door door-clinic" href="#clinic">
+          <span class="door-index">02</span>
+          <div><small>REVIEW & FIX</small><h3>造物门诊</h3><p>带着截图或录屏来，找到最影响真实任务的三个交互卡点。</p></div>
+          <b>做一次前端预诊 ↘</b>
+        </a>
+        <a class="door door-library" href="#library">
+          <span class="door-index">03</span>
+          <div><small>FIND & DECIDE</small><h3>设计资源库</h3><p>按“我要做什么”找灵感、工具、界面参考和动效方法。</p></div>
+          <b>打开精选资源 ↘</b>
+        </a>
+      </div>
+    </section>
+
+    <section class="feed" id="feed" aria-labelledby="feed-title">
+      <div class="section-head split">
+        <div><p class="overline">02 / FIELD FEED</p><h2 id="feed-title">正在发生</h2></div>
+        <p>这里只放活动、课程与可以直接动手的内容，不做资讯流。</p>
+      </div>
+      <div class="filter-row" role="tablist" aria-label="内容筛选">
+        <button class="filter is-active" type="button" data-filter="all" role="tab" aria-selected="true">全部</button>
+        <button class="filter" type="button" data-filter="course" role="tab" aria-selected="false">课程</button>
+        <button class="filter" type="button" data-filter="activity" role="tab" aria-selected="false">活动</button>
+        <button class="filter" type="button" data-filter="motion" role="tab" aria-selected="false">动效</button>
+      </div>
+      <div class="feed-grid">
+        <a class="feed-card card-wide" data-kind="course motion" href="#vibe-motion">
+          <div class="motion-thumb" aria-hidden="true"><span>VIBE</span><span>MOTION</span><i></i></div>
+          <div class="feed-meta"><span>重点模块 · 45 MIN</span><span>初阶</span></div>
+          <h3>Vibe Motion：让静态设计真正动起来</h3>
+          <p>安装 Skill，给出海报与时间线，一次完成 8 秒动态作品。</p>
+        </a>
+        <a class="feed-card card-lime" data-kind="course" href="https://ai-zaowushe-codex-course.pages.dev/" target="_blank" rel="noreferrer">
+          <div class="feed-meta"><span>课程 · CODEX</span><span>已开放 ↗</span></div>
+          <h3>第一次使用 Codex</h3>
+          <p>安装、权限、参考拆解、项目流程与验收。</p>
+          <strong>从首作开始</strong>
+        </a>
+        <a class="feed-card card-paper" data-kind="course" href="https://ai-zaowushe-creator-course.pages.dev/" target="_blank" rel="noreferrer">
+          <div class="feed-meta"><span>课程 · EAZO</span><span>已开放 ↗</span></div>
+          <h3>2–3 小时做好第一个项目</h3>
+          <p>从灵感图、一句话项目到发布链接。</p>
+          <strong>打开 Eazo 首作课</strong>
+        </a>
+        <article class="feed-card card-black" data-kind="activity">
+          <div class="feed-meta"><span>活动记录</span><span>AI造物社</span></div>
+          <h3>Eazo 数字艺术黑客松</h3>
+          <p>用真实命题、现场制作与公开展示，检验一个创意是否能变成作品。</p>
+          <strong>活动内容整理中</strong>
+        </article>
+        <article class="feed-card card-paper" data-kind="activity">
+          <div class="feed-meta"><span>分享记录</span><span>审美 / 设计</span></div>
+          <h3>创作者的审美与方法分享</h3>
+          <p>从作品出发，拆解参考、判断与具体制作过程。</p>
+          <strong>后续持续更新</strong>
+        </article>
+      </div>
+    </section>
+
+    <section class="school" id="school" aria-labelledby="school-title">
+      <div class="school-brand">
+        <img src="assets/ai-zaowushe-logo.svg" alt="AI造物社 ART WITH AI">
+        <p>学习、活动与共同创作。先把第一件作品做出来，再升级方法。</p>
+      </div>
+      <div class="section-head school-head">
+        <p class="overline">03 / AI CREATOR SCHOOL</p>
+        <h2 id="school-title">课程不是一张清单，<br>是一条升级路线。</h2>
+      </div>
+      <div class="level-tabs" role="tablist" aria-label="课程级别">
+        <button type="button" class="level-tab is-active" data-level="beginner" role="tab" aria-selected="true"><span>01</span>初阶 · 已开放</button>
+        <button type="button" class="level-tab" data-level="intermediate" role="tab" aria-selected="false"><span>02</span>中阶 · 规划中</button>
+        <button type="button" class="level-tab" data-level="advanced" role="tab" aria-selected="false"><span>03</span>高阶 · 规划中</button>
+      </div>
+      <div class="level-panels">
+        <div class="level-panel is-active" data-level-panel="beginner">
+          <div class="level-intro"><small>本期目标</small><h3>先完成一件能打开、能操作、能分享的作品。</h3><p>不讲复杂系统。每门课都从“现在点哪里、复制什么、怎么验收”开始。</p></div>
+          <div class="course-list">
+            <a href="https://ai-zaowushe-creator-course.pages.dev/" target="_blank" rel="noreferrer"><span>01 / EAZO</span><h4>首作课</h4><p>灵感 → 一句话项目 → 生成 → 调整 → 发布</p><b>打开课程 ↗</b></a>
+            <a href="https://ai-zaowushe-codex-course.pages.dev/" target="_blank" rel="noreferrer"><span>02 / CODEX</span><h4>创作课</h4><p>安装 → 给素材 → 拆参考 → 做项目 → 验收</p><b>打开课程 ↗</b></a>
+            <a href="#vibe-motion"><span>03 / VIBE MOTION</span><h4>动态首作</h4><p>静态设计 → 时间线 → 动效代码 → 导出视频</p><b>进入重点模块 ↓</b></a>
+          </div>
+        </div>
+        <div class="level-panel" data-level-panel="intermediate" hidden>
+          <div class="level-intro"><small>下一阶段</small><h3>把一次顺利，变成可以重复的工作流。</h3><p>Codex × 飞书协作、项目上下文、权限配置、Skill 制作与团队交接。</p></div>
+          <div class="coming-note">内容正在从真实项目中整理，本期暂不开放。</div>
+        </div>
+        <div class="level-panel" data-level-panel="advanced" hidden>
+          <div class="level-intro"><small>长期方向</small><h3>把个人方法变成产品、系统与可复用能力。</h3><p>多 Agent 协作、知识基础设施、产品化 Skill 与复杂体验交付。</p></div>
+          <div class="coming-note">先完成初阶与中阶，再进入这一层。</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="vibe-motion" id="vibe-motion" aria-labelledby="motion-title">
+      <div class="motion-heading">
+        <p class="overline">04 / KEY MODULE</p>
+        <h2 id="motion-title">Vibe Motion<br>把设计动起来。</h2>
+        <p>重点不是“加动画”，而是把静态设计里的层级、节奏和情绪，写成一段可以修改的时间线。</p>
+        <div class="motion-links">
+          <a href="https://github.com/vibe-motion/skills" target="_blank" rel="noreferrer">安装官方 Skills ↗</a>
+          <a href="https://vibe-motion.github.io/" target="_blank" rel="noreferrer">查看官方案例 ↗</a>
+        </div>
+      </div>
+      <div class="motion-demo" aria-label="8 秒动态海报示意">
+        <div class="demo-stage">
+          <span class="demo-kicker">8 SEC / 9:16</span>
+          <strong>MAKE<br>IT MOVE</strong>
+          <i class="demo-ball"></i><i class="demo-line"></i>
+          <span class="demo-time">00:08</span>
+        </div>
+        <div class="demo-track"><span style="--w:18%"></span><span style="--w:28%"></span><span style="--w:22%"></span><span style="--w:32%"></span></div>
+      </div>
+      <div class="motion-workflow">
+        <ol>
+          <li><span>01</span><div><b>给材料</b><p>海报源图、Logo、字体与尺寸。</p></div></li>
+          <li><span>02</span><div><b>说时间</b><p>0–2 秒进场，2–6 秒展开，6–8 秒收束。</p></div></li>
+          <li><span>03</span><div><b>看预览</b><p>先确认层级和节奏，再修细节。</p></div></li>
+          <li><span>04</span><div><b>验导出</b><p>尺寸、帧率、循环、字体与文件都正确。</p></div></li>
+        </ol>
+        <div class="prompt-card">
+          <div><span>可直接复制</span><button type="button" data-copy="#motion-prompt">复制提示词</button></div>
+          <pre id="motion-prompt">请使用已安装的 Vibe Motion Skill，把当前文件夹里的海报做成一段 8 秒动态海报。
+
+画布：1080 × 1920，9:16，30fps。
+节奏：0–2 秒主标题进入；2–6 秒图形展开并形成层次；6–8 秒回到稳定构图。
+要求：保留原海报字体、配色和留白，不新增装饰风格；先给我可预览版本，再根据反馈修改；最后导出 MP4，并告诉我文件路径。</pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="clinic" id="clinic" aria-labelledby="clinic-title">
+      <div class="section-head split">
+        <div><p class="overline">05 / CREATION CLINIC</p><h2 id="clinic-title">造物门诊</h2></div>
+        <p>上传画面之前，先说清“谁要完成什么”。门诊只找最影响任务的三个卡点。</p>
+      </div>
+      <div class="clinic-shell">
+        <div class="clinic-form">
+          <div class="clinic-status"><span>FRONTEND PREVIEW</span><b>本地预诊，不上传文件</b></div>
+          <label>谁在使用？<input id="clinic-user" type="text" placeholder="例如：第一次打开产品的新用户"></label>
+          <label>他必须完成什么？<input id="clinic-task" type="text" placeholder="例如：在 30 秒内找到并开始生成"></label>
+          <fieldset>
+            <legend>选择证据</legend>
+            <div class="evidence-types">
+              <label><input type="radio" name="evidence" value="当前页面截图" checked><span>当前页截图<small>看信息与动作</small></span></label>
+              <label><input type="radio" name="evidence" value="完整截图组"><span>完整截图组<small>看前后状态</small></span></label>
+              <label><input type="radio" name="evidence" value="操作录屏"><span>操作录屏<small>看真实过程</small></span></label>
+            </div>
+          </fieldset>
+          <label class="file-drop" for="clinic-files"><input id="clinic-files" type="file" accept="image/png,image/jpeg,image/webp,video/mp4,video/quicktime,video/webm" multiple><span>＋ 选择截图或录屏</span><small data-file-state>文件只在当前浏览器中预览</small></label>
+          <button class="button primary clinic-submit" type="button">生成预诊问题</button>
+        </div>
+        <div class="clinic-report" aria-live="polite">
+          <div class="report-empty">
+            <span>01—03</span><h3>结果会长这样</h3><p>界面证据 → 为什么卡住 → 改成什么状态 → 怎么复测。</p>
+          </div>
+          <div class="report-result" hidden>
+            <span>PREVIEW / 不是正式诊断</span><h3 data-report-title>先补齐真实任务</h3><p data-report-copy>写清楚用户和任务后，再进入正式诊断。</p>
+            <ol><li>入口是否告诉用户第一步？</li><li>操作后是否立刻有反馈？</li><li>结果是否让人知道下一步？</li></ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="library" id="library" aria-labelledby="library-title">
+      <div class="section-head split">
+        <div><p class="overline">06 / DESIGN LIBRARY</p><h2 id="library-title">设计资源库</h2></div>
+        <p>按任务找资源。每一项都告诉你“什么时候用”，避免收藏一堆却不知道从哪开始。</p>
+      </div>
+      <div class="resource-search">
+        <label for="resource-query">我现在想做</label>
+        <input id="resource-query" type="search" placeholder="输入：网页 / 动效 / 界面 / 灵感">
+        <span data-resource-count>6 个精选入口</span>
+      </div>
+      <div class="resource-grid">
+        <a class="resource-card" data-search="灵感 情绪 图像 视觉 Pinterest" href="https://www.pinterest.com/" target="_blank" rel="noreferrer"><span>灵感 / 图像</span><h3>Pinterest</h3><p>快速建立视觉方向，适合找色彩、材质、构图与风格关键词。</p><b>打开 ↗</b></a>
+        <a class="resource-card" data-search="灵感 研究 收集 整理 Are.na" href="https://www.are.na/" target="_blank" rel="noreferrer"><span>灵感 / 研究</span><h3>Are.na</h3><p>把图片、文章与想法放进同一个研究脉络，适合长期积累。</p><b>打开 ↗</b></a>
+        <a class="resource-card" data-search="界面 UI UX 流程 Refero" href="https://refero.design/" target="_blank" rel="noreferrer"><span>界面 / 流程</span><h3>Refero</h3><p>查找真实产品界面和用户流程，适合把交互说得更具体。</p><b>打开 ↗</b></a>
+        <a class="resource-card" data-search="界面 UI UX 移动 组件 Mobbin" href="https://mobbin.com/" target="_blank" rel="noreferrer"><span>界面 / 产品</span><h3>Mobbin</h3><p>对照成熟产品的界面模式，适合登录、支付、搜索等具体任务。</p><b>打开 ↗</b></a>
+        <a class="resource-card" data-search="网页 动效 motion 效果 MotionSites" href="https://motionsites.ai/" target="_blank" rel="noreferrer"><span>网页 / 动效</span><h3>MotionSites</h3><p>寻找网站动效与页面氛围参考，复制截图时记得同时保留原链接。</p><b>打开 ↗</b></a>
+        <a class="resource-card featured" data-search="工具 AI 设计 导航 ZONE Design" href="https://zone-design.tlabel-optimus-workbench-clone.workers.dev/" target="_blank" rel="noreferrer"><span>工具 / 精选目录</span><h3>ZONE Design</h3><p>从“我要做什么”出发，比较经过整理的 AI 设计工具与使用边界。</p><b>打开完整目录 ↗</b></a>
+      </div>
+      <p class="no-results" hidden>没有匹配的资源。试试“网页”“动效”“界面”或“灵感”。</p>
+    </section>
+
+    <section class="membership" aria-labelledby="membership-title">
+      <div>
+        <p class="overline">07 / MEMBER LOOP</p>
+        <h2 id="membership-title">做完一件，<br>再解锁下一件。</h2>
+      </div>
+      <div class="point-rules">
+        <div><span>+20</span><p>建立体验账号</p></div>
+        <div><span>+30</span><p>完成第一件作品</p></div>
+        <div><span>+20</span><p>提交一次复盘</p></div>
+        <div><span>+50</span><p>参加现场活动</p></div>
+      </div>
+      <div class="membership-action"><p>积分体系目前是前端体验，用来验证会员路线；真实账号、权益与活动核销将在后端接入后开放。</p><button class="button primary" type="button" data-open-account>建立体验账号</button></div>
+    </section>
+  </main>
+
+  <footer>
+    <div><strong>Z.ONE</strong><span>把灵感做成作品</span></div>
+    <img src="assets/ai-zaowushe-logo.svg" alt="AI造物社 ART WITH AI">
+    <p>前端整合版 · AI造物社 / 造物门诊 / 设计资源库</p>
+  </footer>
+
+  <dialog class="account-dialog" aria-labelledby="account-title">
+    <button class="dialog-close" type="button" data-close-account aria-label="关闭">×</button>
+    <div class="dialog-mark">Z.ONE / MEMBER 001</div>
+    <h2 id="account-title">先建立一个<br>体验账号。</h2>
+    <p>当前版本只把昵称与积分保存在这个浏览器里，不会上传到服务器。</p>
+    <form id="account-form">
+      <label>你的昵称<input id="account-name" name="name" required maxlength="24" placeholder="怎么称呼你"></label>
+      <label>你的身份<select id="account-role" name="role"><option>第一次使用 AI 创作工具</option><option>经常使用 Codex</option><option>设计师 / 创作者</option></select></label>
+      <button class="button primary" type="submit">领取 20 个体验积分</button>
+    </form>
+    <div class="account-success" hidden><span>WELCOME</span><h3 data-welcome-name>欢迎加入</h3><p>你的体验积分已经记录在当前浏览器。</p><button class="button ghost" type="button" data-close-account>继续浏览</button></div>
+  </dialog>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
