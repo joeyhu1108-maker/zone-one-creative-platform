@@ -4,13 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Z.ONE 创作入口：AI造物社课程与活动、造物门诊、设计资源库。">
-  <meta name="theme-color" content="#f1f2e8">
+  <meta name="theme-color" content="#0a0c09">
   <title>Z.ONE｜把灵感做成作品</title>
   <link rel="icon" href="assets/ai-zaowushe-logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
   <script src="app.js" defer></script>
 </head>
 <body>
+  <div class="scroll-progress" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="cursor-dot" aria-hidden="true"></div>
   <div class="field-bg" aria-hidden="true">
     <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
   </div>
@@ -32,9 +35,11 @@
 
   <main id="top">
     <section class="hero" aria-labelledby="hero-title">
+      <canvas id="kinetic-canvas" aria-hidden="true"></canvas>
+      <div class="hero-beam" aria-hidden="true"></div>
       <div class="hero-copy">
-        <p class="overline">Z.ONE × AI造物社</p>
-        <h1 id="hero-title">把灵感<br>做成作品。</h1>
+        <div class="hero-meta"><p class="overline">Z.ONE × AI造物社</p><span>SHANGHAI / 2026</span></div>
+        <h1 id="hero-title"><span>把灵感</span><span>做成作品<i>。</i></span></h1>
         <p class="hero-lead">从学习、动手，到交付前的一次诊断。三个入口，陪你把“我有个想法”推进到真正可以打开、操作和分享的结果。</p>
         <div class="hero-actions">
           <a class="button primary" href="#school">开始学习</a>
@@ -42,15 +47,14 @@
         </div>
       </div>
       <div class="hero-object" aria-label="从灵感到作品的动态示意">
-        <div class="object-label"><span>IDEA</span><span>WORK</span></div>
-        <div class="object-core">
-          <b>想</b><b>做</b><b>看</b>
-          <span class="orbit orbit-one"></span>
-          <span class="orbit orbit-two"></span>
-        </div>
-        <div class="object-timeline"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="object-label"><span>IDEA / 01</span><span>WORK / 03</span></div>
+        <div class="object-core"><b>想</b><b>做</b><b>看</b><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span></div>
+        <div class="object-caption"><span>MOVE YOUR CURSOR</span><b>进入创作现场 ↘</b></div>
       </div>
+      <a class="hero-scroll" href="#platform-map"><span>SCROLL TO EXPLORE</span><i></i></a>
     </section>
+
+    <div class="kinetic-strip" aria-hidden="true"><div><span>IDEA INTO FORM</span><i>✦</i><span>MAKE SOMETHING REAL</span><i>✦</i><span>AI CREATOR FIELD</span><i>✦</i><span>IDEA INTO FORM</span><i>✦</i><span>MAKE SOMETHING REAL</span><i>✦</i></div></div>
 
     <section class="platform-map" id="platform-map" aria-labelledby="map-title">
       <div class="section-head compact">
