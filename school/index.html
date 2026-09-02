@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AI造物社课程中心：Eazo、Codex 与 Vibe Motion 创作路线。">
+  <meta name="theme-color" content="#0a0c09">
+  <title>AI造物社｜Z.ONE</title>
+  <link rel="icon" href="../assets/ai-zaowushe-logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../styles.css">
+  <script src="../app.js" defer></script>
+</head>
+<body class="module-page module-school-page">
+  <div class="scroll-progress" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="field-bg" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+  <header class="site-header module-header">
+    <a class="zone-mark" href="../" aria-label="返回 Z.ONE 总站"><strong>Z.ONE</strong><span>创意实践与学习平台</span></a>
+    <nav aria-label="模块导航">
+      <a href="../school/" aria-current="page">AI造物社</a>
+      <a href="../clinic/">造物门诊</a>
+      <a href="../library/">设计资源库</a>
+    </nav>
+    <a class="module-return" href="../">← 返回总站</a>
+  </header>
+
+  <main id="top">
+    <section class="module-hero module-hero-school" aria-labelledby="module-title">
+      <div class="module-breadcrumb"><a href="../">Z.ONE 总站</a><span>/</span><b>AI造物社</b></div>
+      <div class="module-hero-copy">
+        <p class="overline">LEVEL 02 / MODULE 01 · LEARN & BUILD</p>
+        <h1 id="module-title">AI<br>造物社</h1>
+        <p>这里负责学习和动手。先按你的工具与目标选一门课，再把第一件能打开、能操作、能分享的作品做出来。</p>
+      </div>
+      <img class="module-brand-mark" src="../assets/ai-zaowushe-logo.svg" alt="AI造物社 ART WITH AI">
+      <a class="module-down" href="#choose-course">选择一门课 ↓</a>
+    </section>
+
+    <ol class="hierarchy-line" aria-label="当前位置">
+      <li><b>01</b><span>Z.ONE 总站<small>选择方向</small></span></li>
+      <li aria-current="step"><b>02</b><span>AI造物社<small>选择课程</small></span></li>
+      <li><b>03</b><span>Eazo / Codex / Vibe Motion<small>开始制作</small></span></li>
+    </ol>
+
+    <section class="school" id="choose-course" aria-labelledby="school-title">
+      <div class="school-brand">
+        <img src="../assets/ai-zaowushe-logo.svg" alt="AI造物社 ART WITH AI">
+        <p>你不需要把全部内容看完。按现在的任务，选一个入口。</p>
+      </div>
+      <div class="section-head school-head">
+        <p class="overline">CHOOSE YOUR ROUTE</p>
+        <h2 id="school-title">你想先做出<br>什么？</h2>
+      </div>
+      <div class="level-tabs" role="tablist" aria-label="课程级别">
+        <button type="button" class="level-tab is-active" data-level="beginner" role="tab" aria-selected="true"><span>01</span>初阶 · 已开放</button>
+        <button type="button" class="level-tab" data-level="intermediate" role="tab" aria-selected="false"><span>02</span>中阶 · 规划中</button>
+        <button type="button" class="level-tab" data-level="advanced" role="tab" aria-selected="false"><span>03</span>高阶 · 规划中</button>
+      </div>
+      <div class="level-panels">
+        <div class="level-panel is-active" data-level-panel="beginner">
+          <div class="level-intro"><small>本期目标</small><h3>先完成一件能打开、能操作、能分享的作品。</h3><p>每门课都从“现在点哪里、复制什么、怎么验收”开始。</p></div>
+          <div class="course-list">
+            <a id="eazo" href="https://ai-zaowushe-creator-course.pages.dev/" target="_blank" rel="noreferrer"><span>01 / EAZO · 已开放</span><h4>首作课</h4><p>适合第一次用 Eazo：灵感 → 一句话项目 → 生成 → 调整 → 发布。</p><b>进入 Eazo 课程 ↗</b></a>
+            <a id="codex" href="https://ai-zaowushe-codex-course.pages.dev/" target="_blank" rel="noreferrer"><span>02 / CODEX · 已开放</span><h4>创作课</h4><p>适合第一次或经常用 Codex 的人：安装 → 给素材 → 拆参考 → 做项目 → 验收。</p><b>进入 Codex 课程 ↗</b></a>
+            <a href="#vibe-motion"><span>03 / VIBE MOTION · 制作中</span><h4>动态首作</h4><p>Z.ONE 原创模块：静态设计 → 时间线 → 可编辑动效。</p><b>查看模块计划 ↓</b></a>
+          </div>
+        </div>
+        <div class="level-panel" data-level-panel="intermediate" hidden>
+          <div class="level-intro"><small>下一阶段</small><h3>把一次顺利，变成可以重复的工作流。</h3><p>Codex × 飞书协作、项目上下文、权限配置、Skill 制作与团队交接。</p></div>
+          <div class="coming-note">内容正在从真实项目中整理，本期暂不开放。</div>
+        </div>
+        <div class="level-panel" data-level-panel="advanced" hidden>
+          <div class="level-intro"><small>长期方向</small><h3>把个人方法变成产品、系统与可复用能力。</h3><p>多 Agent 协作、知识基础设施、产品化 Skill 与复杂体验交付。</p></div>
+          <div class="coming-note">先完成初阶与中阶，再进入这一层。</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="vibe-motion" id="vibe-motion" aria-labelledby="motion-title">
+      <div class="motion-heading">
+        <p class="overline">AI造物社 / Z.ONE ORIGINAL · IN DEVELOPMENT</p>
+        <h2 id="motion-title">Vibe Motion<br>把设计动起来。</h2>
+        <p>这是 AI造物社里正在制作的重点模块。它会把静态设计里的层级、节奏和情绪，变成可以预览、修改和导出的动效制作路径。</p>
+        <div class="motion-links"><span>Z.ONE 原创模块</span><span>正在制作，暂未开放</span></div>
+      </div>
+      <div class="motion-demo" aria-label="8 秒动态海报示意">
+        <div class="demo-stage"><span class="demo-kicker">8 SEC / 9:16</span><strong>MAKE<br>IT MOVE</strong><i class="demo-ball"></i><i class="demo-line"></i><span class="demo-time">00:08</span></div>
+        <div class="demo-track"><span class="track-18"></span><span class="track-28"></span><span class="track-22"></span><span class="track-32"></span></div>
+      </div>
+      <div class="motion-workflow">
+        <ol>
+          <li><span>01</span><div><b>给材料</b><p>海报源图、Logo、字体与尺寸。</p></div></li>
+          <li><span>02</span><div><b>说时间</b><p>0–2 秒进场，2–6 秒展开，6–8 秒收束。</p></div></li>
+          <li><span>03</span><div><b>看预览</b><p>先确认层级和节奏，再修细节。</p></div></li>
+          <li><span>04</span><div><b>验导出</b><p>尺寸、帧率、循环、字体与文件都正确。</p></div></li>
+        </ol>
+        <div class="prompt-card">
+          <div><span>制作方法预览</span><button type="button" data-copy="#motion-prompt">复制练习提示词</button></div>
+          <pre id="motion-prompt">请用当前项目中可用的前端与动效工具，把文件夹里的海报做成一段 8 秒动态海报。这是 Vibe Motion 模块的方法预演，不需要安装同名外部 Skill。
+
+画布：1080 × 1920，9:16，30fps。
+节奏：0–2 秒主标题进入；2–6 秒图形展开并形成层次；6–8 秒回到稳定构图。
+要求：保留原海报字体、配色和留白，不新增装饰风格；先给我可预览版本，再根据反馈修改；最后导出 MP4，并告诉我文件路径。</pre>
+        </div>
+      </div>
+    </section>
+
+    <nav class="module-switcher" aria-label="切换模块">
+      <a href="../"><span>返回一级</span><b>Z.ONE 总站</b><i>←</i></a>
+      <a href="../clinic/"><span>下一个模块</span><b>造物门诊</b><i>→</i></a>
+    </nav>
+  </main>
+
+  <footer class="module-footer"><div><strong>Z.ONE</strong><span>AI造物社 / 二级模块</span></div><img src="../assets/ai-zaowushe-logo.svg" alt="AI造物社 ART WITH AI"><p><a href="../">返回总站</a> · <a href="../clinic/">造物门诊</a> · <a href="../library/">设计资源库</a></p></footer>
+  <div class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

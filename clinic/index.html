@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Z.ONE 造物门诊：用截图或录屏找出最影响真实任务的三个交互卡点。">
+  <meta name="theme-color" content="#0a0c09">
+  <title>造物门诊｜Z.ONE</title>
+  <link rel="icon" href="../assets/ai-zaowushe-logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../styles.css">
+  <script src="../app.js" defer></script>
+</head>
+<body class="module-page module-clinic-page">
+  <div class="scroll-progress" aria-hidden="true"></div><div class="grain" aria-hidden="true"></div><div class="cursor-dot" aria-hidden="true"></div><div class="field-bg" aria-hidden="true"><i></i></div>
+  <header class="site-header module-header">
+    <a class="zone-mark" href="../" aria-label="返回 Z.ONE 总站"><strong>Z.ONE</strong><span>创意实践与学习平台</span></a>
+    <nav aria-label="模块导航"><a href="../school/">AI造物社</a><a href="../clinic/" aria-current="page">造物门诊</a><a href="../library/">设计资源库</a></nav>
+    <a class="module-return" href="../">← 返回总站</a>
+  </header>
+
+  <main id="top">
+    <section class="module-hero module-hero-clinic" aria-labelledby="module-title">
+      <div class="module-breadcrumb"><a href="../">Z.ONE 总站</a><span>/</span><b>造物门诊</b></div>
+      <div class="module-hero-copy"><p class="overline">LEVEL 02 / MODULE 02 · REVIEW & FIX</p><h1 id="module-title">造物<br>门诊</h1><p>这里负责交付前检查。带着一个真实任务和截图或录屏来，先把问题问对，再找到最影响体验的三个卡点。</p></div>
+      <div class="module-orbit" aria-hidden="true"><b>看</b><span></span><i></i></div>
+      <a class="module-down" href="#start-clinic">开始预诊 ↓</a>
+    </section>
+
+    <ol class="hierarchy-line" aria-label="当前位置">
+      <li><b>01</b><span>Z.ONE 总站<small>选择方向</small></span></li>
+      <li aria-current="step"><b>02</b><span>造物门诊<small>说明真实任务</small></span></li>
+      <li><b>03</b><span>三个关键卡点<small>修改并复测</small></span></li>
+    </ol>
+
+    <section class="module-steps" aria-labelledby="clinic-steps-title">
+      <div><p class="overline">BEFORE YOU START</p><h2 id="clinic-steps-title">准备三样东西。</h2></div>
+      <ol><li><b>01</b><span>谁在使用？</span><p>说清具体的人，不写“所有用户”。</p></li><li><b>02</b><span>他要完成什么？</span><p>写一个可以观察到的动作。</p></li><li><b>03</b><span>哪里卡住？</span><p>放一张截图、截图组或操作录屏。</p></li></ol>
+    </section>
+
+    <section class="clinic" id="start-clinic" aria-labelledby="clinic-title">
+      <div class="section-head split"><div><p class="overline">START / LOCAL PREVIEW</p><h2 id="clinic-title">先生成<br>诊断问题</h2></div><p>当前页面只在浏览器中整理输入，不会上传文件。它帮助你确认正式门诊应该分析什么。</p></div>
+      <div class="clinic-shell">
+        <div class="clinic-form">
+          <div class="clinic-status"><span>FRONTEND PREVIEW</span><b>本地预诊，不上传文件</b></div>
+          <label>谁在使用？<input id="clinic-user" type="text" placeholder="例如：第一次打开产品的新用户"></label>
+          <label>他必须完成什么？<input id="clinic-task" type="text" placeholder="例如：在 30 秒内找到并开始生成"></label>
+          <fieldset><legend>选择证据</legend><div class="evidence-types"><label><input type="radio" name="evidence" value="当前页面截图" checked><span>当前页截图<small>看信息与动作</small></span></label><label><input type="radio" name="evidence" value="完整截图组"><span>完整截图组<small>看前后状态</small></span></label><label><input type="radio" name="evidence" value="操作录屏"><span>操作录屏<small>看真实过程</small></span></label></div></fieldset>
+          <label class="file-drop" for="clinic-files"><input id="clinic-files" type="file" accept="image/png,image/jpeg,image/webp,video/mp4,video/quicktime,video/webm" multiple><span>＋ 选择截图或录屏</span><small data-file-state>文件只在当前浏览器中预览</small></label>
+          <button class="button primary clinic-submit" type="button">生成预诊问题</button>
+        </div>
+        <div class="clinic-report" aria-live="polite">
+          <div class="report-empty"><span>01—03</span><h3>结果会长这样</h3><p>界面证据 → 为什么卡住 → 改成什么状态 → 怎么复测。</p></div>
+          <div class="report-result" hidden><span>PREVIEW / 不是正式诊断</span><h3 data-report-title>先补齐真实任务</h3><p data-report-copy>写清楚用户和任务后，再进入正式诊断。</p><ol><li>入口是否告诉用户第一步？</li><li>操作后是否立刻有反馈？</li><li>结果是否让人知道下一步？</li></ol></div>
+        </div>
+      </div>
+    </section>
+
+    <nav class="module-switcher" aria-label="切换模块"><a href="../school/"><span>上一个模块</span><b>AI造物社</b><i>←</i></a><a href="../library/"><span>下一个模块</span><b>设计资源库</b><i>→</i></a></nav>
+  </main>
+  <footer class="module-footer"><div><strong>Z.ONE</strong><span>造物门诊 / 二级模块</span></div><img src="../assets/ai-zaowushe-logo.svg" alt="AI造物社 ART WITH AI"><p><a href="../">返回总站</a> · <a href="../school/">AI造物社</a> · <a href="../library/">设计资源库</a></p></footer>
+  <div class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
