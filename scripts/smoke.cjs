@@ -16,6 +16,10 @@ async function inspect(page, viewport, suffix) {
   assert.match(text, /造物门诊/);
   assert.match(text, /设计资源库/);
   assert.match(text, /Vibe Motion/);
+  assert.match(text, /ART\s+LOOKS\s+BACK/);
+  assert.match(text, /上传你的作品/);
+  assert.equal(await page.locator(".hero video source").getAttribute("src"), "assets/art-looks-back-live-demo.mp4");
+  assert.equal(await page.locator(".hero-upload").count(), 1);
   assert.equal(await page.locator(".door").count(), 3);
   assert.equal(await page.locator(".level-tab").count(), 3);
   assert.equal(await page.locator(".resource-card").count(), 6);
