@@ -353,60 +353,147 @@ const accountName = $("#account-name");
 const accessCanvas = $("#access-canvas");
 const accountCard = $(".account-card");
 let accessFrame = 0;
-const accessPointer = { x: .58, y: .34 };
-const accessSpecks = Array.from({ length: 48 }, (_, index) => ({
-  x: (Math.sin(index * 91.17) + 1) / 2,
-  y: (Math.cos(index * 47.73) + 1) / 2,
-  size: .35 + ((index * 17) % 8) / 10,
-  phase: index * .63
-}));
+const accessPointer = { x: .58, y: .34, targetX: .58, targetY: .34, hover: .88, targetHover: .88 };
+let accessRenderer;
+
+function createAccessRenderer() {
+  const gl = accessCanvas?.getContext("webgl", {
+    alpha: false,
+    antialias: false,
+    depth: false,
+    powerPreference: "high-performance"
+  });
+  if (!gl) return null;
+
+  const vertexSource = "attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}";
+  const fragmentSource = `
+    precision highp float;
+    uniform vec2 u_res;
+    uniform float u_time;
+    uniform vec2 u_ptr;
+    uniform float u_hov;
+
+    float hash(vec2 p) {
+      p=fract(p*vec2(127.1,311.7));
+      p+=dot(p,p+19.19);
+      return fract(p.x*p.y);
+    }
+
+    float vnoise(vec2 p) {
+      vec2 i=floor(p),f=fract(p);
+      vec2 u=f*f*(3.0-2.0*f);
+      return mix(mix(hash(i),hash(i+vec2(1.,0.)),u.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),u.x),u.y);
+    }
+
+    float fbm(vec2 p) {
+      float v=0.0,a=0.5;
+      for(int i=0;i<5;i++) {
+        v+=a*vnoise(p);
+        p=p*2.03+vec2(1.7,9.2);
+        a*=0.5;
+      }
+      return v;
+    }
+
+    void main() {
+      vec2 uv=gl_FragCoord.xy/u_res;
+      vec2 p=uv-0.5;
+      p.x*=u_res.x/u_res.y;
+
+      float warp=fbm(uv*2.7+vec2(u_time*0.045,-u_time*0.025));
+      float folds=fbm(uv*4.1+vec2(warp*1.8,-warp*1.3)+u_ptr*0.7);
+      float angle=uv.x*1.45-uv.y*1.15+(u_ptr.x-0.5)*1.7+(u_ptr.y-0.5)*1.2+warp*1.7+u_time*0.035;
+      float ribbon=pow(0.5+0.5*sin(angle*10.5+folds*7.0),2.2);
+      float cloud=smoothstep(0.42,0.82,folds+warp*0.25);
+
+      vec2 sweepDir=normalize(vec2(0.72,0.68));
+      float sweep=exp(-9.0*abs(dot(p,sweepDir)-(u_ptr.x-0.5)*1.25-(u_ptr.y-0.5)*0.72));
+
+      vec2 grid=uv*vec2(142.0,188.0);
+      vec2 cell=floor(grid);
+      float seed=hash(cell);
+      vec2 jitter=(vec2(hash(cell+7.3),hash(cell+3.7))-0.5)*0.58;
+      float dotShape=1.0-smoothstep(0.04,0.24,length(fract(grid)-0.5-jitter));
+      float twinkle=0.38+0.62*pow(0.5+0.5*sin(u_time*1.8+seed*52.0+(u_ptr.x+u_ptr.y)*5.0),8.0);
+      float sparkle=step(0.86,seed)*dotShape*twinkle;
+
+      vec3 base=mix(vec3(0.012,0.014,0.016),vec3(0.045,0.048,0.052),uv.y);
+      float foil=(ribbon*0.47+cloud*0.34+sweep*0.56)*(0.76+u_hov*0.36);
+      vec3 col=base+vec3(0.44,0.48,0.53)*foil+vec3(0.95,0.98,1.0)*sparkle*(0.62+u_hov*0.48);
+      float vignette=1.0-smoothstep(0.28,1.18,length(p*vec2(0.86,1.0)));
+      col*=mix(0.58,1.0,vignette);
+      col=1.0-exp(-col*1.18);
+      gl_FragColor=vec4(col,1.0);
+    }
+  `;
+
+  function compile(type, source) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      gl.deleteShader(shader);
+      return null;
+    }
+    return shader;
+  }
+
+  const vertex = compile(gl.VERTEX_SHADER, vertexSource);
+  const fragment = compile(gl.FRAGMENT_SHADER, fragmentSource);
+  if (!vertex || !fragment) return null;
+  const program = gl.createProgram();
+  gl.attachShader(program, vertex);
+  gl.attachShader(program, fragment);
+  gl.linkProgram(program);
+  gl.deleteShader(vertex);
+  gl.deleteShader(fragment);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return null;
+
+  gl.useProgram(program);
+  const buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,3,-1,-1,3]), gl.STATIC_DRAW);
+  const position = gl.getAttribLocation(program, "p");
+  gl.enableVertexAttribArray(position);
+  gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+  accessCanvas.dataset.fieldMode = "webgl";
+
+  return {
+    gl,
+    resolution: gl.getUniformLocation(program, "u_res"),
+    time: gl.getUniformLocation(program, "u_time"),
+    pointer: gl.getUniformLocation(program, "u_ptr"),
+    hover: gl.getUniformLocation(program, "u_hov")
+  };
+}
 
 function drawAccessField(time = 0) {
   if (!accessCanvas || !accountDialog?.open) {
     accessFrame = 0;
     return;
   }
-  const context = accessCanvas.getContext("2d");
+  if (accessRenderer === undefined) accessRenderer = createAccessRenderer();
   const bounds = accessCanvas.getBoundingClientRect();
-  const dpr = Math.min(devicePixelRatio || 1, 1.7);
+  const dpr = Math.min(devicePixelRatio || 1, 1.5);
   const width = Math.max(1, Math.round(bounds.width * dpr));
   const height = Math.max(1, Math.round(bounds.height * dpr));
   if (accessCanvas.width !== width || accessCanvas.height !== height) {
     accessCanvas.width = width;
     accessCanvas.height = height;
   }
-  context.setTransform(dpr, 0, 0, dpr, 0, 0);
-  context.clearRect(0, 0, bounds.width, bounds.height);
-  context.fillStyle = "#070a08";
-  context.fillRect(0, 0, bounds.width, bounds.height);
+  accessPointer.x += (accessPointer.targetX - accessPointer.x) * .075;
+  accessPointer.y += (accessPointer.targetY - accessPointer.y) * .075;
+  accessPointer.hover += (accessPointer.targetHover - accessPointer.hover) * .06;
 
-  const seconds = time * .001;
-  context.globalCompositeOperation = "screen";
-  const blobs = [
-    { x: .44 + Math.sin(seconds * .19) * .13, y: .28 + Math.cos(seconds * .15) * .08, radius: .52, color: "rgba(225,255,241,.2)" },
-    { x: .62 + Math.cos(seconds * .16) * .15, y: .55 + Math.sin(seconds * .13) * .11, radius: .48, color: "rgba(52,211,153,.17)" },
-    { x: accessPointer.x, y: accessPointer.y, radius: .32, color: "rgba(215,255,99,.13)" }
-  ];
-  blobs.forEach((blob) => {
-    const x = blob.x * bounds.width;
-    const y = blob.y * bounds.height;
-    const radius = blob.radius * Math.min(bounds.width, bounds.height);
-    const gradient = context.createRadialGradient(x, y, 0, x, y, radius);
-    gradient.addColorStop(0, blob.color);
-    gradient.addColorStop(.38, blob.color.replace(/\.[0-9]+\)$/, ".07)"));
-    gradient.addColorStop(1, "rgba(0,0,0,0)");
-    context.fillStyle = gradient;
-    context.fillRect(0, 0, bounds.width, bounds.height);
-  });
-
-  accessSpecks.forEach((speck) => {
-    const pulse = .14 + (Math.sin(seconds * .8 + speck.phase) + 1) * .12;
-    context.fillStyle = `rgba(241,240,231,${pulse})`;
-    context.beginPath();
-    context.arc(speck.x * bounds.width, speck.y * bounds.height, speck.size, 0, Math.PI * 2);
-    context.fill();
-  });
-  context.globalCompositeOperation = "source-over";
+  if (accessRenderer) {
+    const { gl } = accessRenderer;
+    gl.viewport(0, 0, width, height);
+    gl.uniform2f(accessRenderer.resolution, width, height);
+    gl.uniform1f(accessRenderer.time, time * .001);
+    gl.uniform2f(accessRenderer.pointer, accessPointer.x, 1 - accessPointer.y);
+    gl.uniform1f(accessRenderer.hover, accessPointer.hover);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
   accountDialog.dataset.accessReady = "true";
   if (!reducedMotion) accessFrame = requestAnimationFrame(drawAccessField);
 }
@@ -423,10 +510,17 @@ function stopAccessField() {
 
 accountCard?.addEventListener("pointermove", (event) => {
   const bounds = accountCard.getBoundingClientRect();
-  accessPointer.x = (event.clientX - bounds.left) / bounds.width;
-  accessPointer.y = (event.clientY - bounds.top) / bounds.height;
-  accountCard.style.setProperty("--portal-x", `${accessPointer.x * 100}%`);
-  accountCard.style.setProperty("--portal-y", `${accessPointer.y * 100}%`);
+  accessPointer.targetX = (event.clientX - bounds.left) / bounds.width;
+  accessPointer.targetY = (event.clientY - bounds.top) / bounds.height;
+  accessPointer.targetHover = 1;
+  accountCard.style.setProperty("--portal-x", `${accessPointer.targetX * 100}%`);
+  accountCard.style.setProperty("--portal-y", `${accessPointer.targetY * 100}%`);
+});
+
+accountCard?.addEventListener("pointerleave", () => {
+  accessPointer.targetX = .5;
+  accessPointer.targetY = .42;
+  accessPointer.targetHover = .78;
 });
 
 function getProfile() {

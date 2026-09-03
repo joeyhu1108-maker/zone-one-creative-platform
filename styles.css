@@ -409,9 +409,9 @@ footer span, footer p { color: rgba(241,240,231,.5); font-size: 10px; } footer i
 .account-portal { min-width: 0; padding: clamp(48px,5vw,78px) clamp(30px,4vw,64px); display: grid; place-items: center; background: radial-gradient(circle at 50% 50%,rgba(128,255,194,.08),transparent 58%),#020403; }
 .account-card-shell { width: min(430px,100%); height: min(610px,100%); padding: 1px; border-radius: 25px; background: linear-gradient(145deg,rgba(255,255,255,.42),rgba(255,255,255,.05) 42%,rgba(128,255,194,.22)); box-shadow: 0 34px 90px -28px rgba(0,0,0,.94),0 0 70px rgba(52,211,153,.07); }
 .account-card { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 24px; background: #070a08; isolation: isolate; }
-#access-canvas { position: absolute; inset: 0; z-index: -3; width: 100%; height: 100%; display: block; opacity: .92; }
+#access-canvas { position: absolute; inset: 0; z-index: -3; width: 100%; height: 100%; display: block; opacity: 1; filter: grayscale(1) contrast(1.18) brightness(1.08); }
 .account-card::before { content: ""; position: absolute; inset: 0; z-index: -2; background: linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px); background-size: 36px 36px; mask-image: linear-gradient(#000,transparent 86%); }
-.account-card::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg,rgba(0,0,0,.03),rgba(0,0,0,.14) 54%,rgba(0,0,0,.82)),radial-gradient(circle at var(--portal-x,50%) var(--portal-y,35%),transparent 0,rgba(0,0,0,.38) 76%); box-shadow: inset 0 0 70px rgba(0,0,0,.52); pointer-events: none; }
+.account-card::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg,rgba(0,0,0,.01),rgba(0,0,0,.08) 54%,rgba(0,0,0,.6)),radial-gradient(circle at var(--portal-x,50%) var(--portal-y,35%),transparent 0,rgba(0,0,0,.26) 80%); box-shadow: inset 0 0 54px rgba(0,0,0,.4); pointer-events: none; }
 .account-card-content { height: 100%; padding: 28px; display: flex; flex-direction: column; }
 .account-card-head,.account-card-foot { display: flex; justify-content: space-between; gap: 14px; }
 .account-card-title { margin: clamp(48px,8vh,82px) 0 28px; }

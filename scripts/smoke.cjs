@@ -74,6 +74,7 @@ async function inspectHome(page, viewport, suffix) {
   assert.equal(await page.locator(".account-dialog").isVisible(), true);
   assert.match(await page.locator("#account-title").innerText(), /把灵感做成/);
   await page.waitForFunction(() => document.querySelector(".account-dialog")?.dataset.accessReady === "true");
+  assert.equal(await page.locator("#access-canvas").getAttribute("data-field-mode"), "webgl");
   await page.screenshot({ path: path.join(outputDir, `aethe-access-${suffix}.png`) });
   await page.locator("#account-name").fill("测试创作者");
   await page.locator("#account-form .account-submit").click();
