@@ -72,6 +72,13 @@ async function inspectHome(page, viewport, suffix) {
 
   await page.locator("[data-open-account]").first().click();
   assert.equal(await page.locator(".account-dialog").isVisible(), true);
+  assert.match(await page.locator("#account-title").innerText(), /把灵感做成/);
+  await page.waitForFunction(() => document.querySelector(".account-dialog")?.dataset.accessReady === "true");
+  await page.screenshot({ path: path.join(outputDir, `aethe-access-${suffix}.png`) });
+  await page.locator("#account-name").fill("测试创作者");
+  await page.locator("#account-form .account-submit").click();
+  assert.match(await page.locator(".account-success").innerText(), /测试创作者，欢迎加入/);
+  assert.equal(await page.locator("[data-points]").innerText(), "20 pts");
   await page.locator("[data-close-account]").first().click();
 
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);

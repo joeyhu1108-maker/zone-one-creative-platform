@@ -350,6 +350,84 @@ const accountDialog = $(".account-dialog");
 const accountForm = $("#account-form");
 const accountSuccess = $(".account-success");
 const accountName = $("#account-name");
+const accessCanvas = $("#access-canvas");
+const accountCard = $(".account-card");
+let accessFrame = 0;
+const accessPointer = { x: .58, y: .34 };
+const accessSpecks = Array.from({ length: 48 }, (_, index) => ({
+  x: (Math.sin(index * 91.17) + 1) / 2,
+  y: (Math.cos(index * 47.73) + 1) / 2,
+  size: .35 + ((index * 17) % 8) / 10,
+  phase: index * .63
+}));
+
+function drawAccessField(time = 0) {
+  if (!accessCanvas || !accountDialog?.open) {
+    accessFrame = 0;
+    return;
+  }
+  const context = accessCanvas.getContext("2d");
+  const bounds = accessCanvas.getBoundingClientRect();
+  const dpr = Math.min(devicePixelRatio || 1, 1.7);
+  const width = Math.max(1, Math.round(bounds.width * dpr));
+  const height = Math.max(1, Math.round(bounds.height * dpr));
+  if (accessCanvas.width !== width || accessCanvas.height !== height) {
+    accessCanvas.width = width;
+    accessCanvas.height = height;
+  }
+  context.setTransform(dpr, 0, 0, dpr, 0, 0);
+  context.clearRect(0, 0, bounds.width, bounds.height);
+  context.fillStyle = "#070a08";
+  context.fillRect(0, 0, bounds.width, bounds.height);
+
+  const seconds = time * .001;
+  context.globalCompositeOperation = "screen";
+  const blobs = [
+    { x: .44 + Math.sin(seconds * .19) * .13, y: .28 + Math.cos(seconds * .15) * .08, radius: .52, color: "rgba(225,255,241,.2)" },
+    { x: .62 + Math.cos(seconds * .16) * .15, y: .55 + Math.sin(seconds * .13) * .11, radius: .48, color: "rgba(52,211,153,.17)" },
+    { x: accessPointer.x, y: accessPointer.y, radius: .32, color: "rgba(215,255,99,.13)" }
+  ];
+  blobs.forEach((blob) => {
+    const x = blob.x * bounds.width;
+    const y = blob.y * bounds.height;
+    const radius = blob.radius * Math.min(bounds.width, bounds.height);
+    const gradient = context.createRadialGradient(x, y, 0, x, y, radius);
+    gradient.addColorStop(0, blob.color);
+    gradient.addColorStop(.38, blob.color.replace(/\.[0-9]+\)$/, ".07)"));
+    gradient.addColorStop(1, "rgba(0,0,0,0)");
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, bounds.width, bounds.height);
+  });
+
+  accessSpecks.forEach((speck) => {
+    const pulse = .14 + (Math.sin(seconds * .8 + speck.phase) + 1) * .12;
+    context.fillStyle = `rgba(241,240,231,${pulse})`;
+    context.beginPath();
+    context.arc(speck.x * bounds.width, speck.y * bounds.height, speck.size, 0, Math.PI * 2);
+    context.fill();
+  });
+  context.globalCompositeOperation = "source-over";
+  accountDialog.dataset.accessReady = "true";
+  if (!reducedMotion) accessFrame = requestAnimationFrame(drawAccessField);
+}
+
+function startAccessField() {
+  if (accessFrame) cancelAnimationFrame(accessFrame);
+  accessFrame = requestAnimationFrame(drawAccessField);
+}
+
+function stopAccessField() {
+  if (accessFrame) cancelAnimationFrame(accessFrame);
+  accessFrame = 0;
+}
+
+accountCard?.addEventListener("pointermove", (event) => {
+  const bounds = accountCard.getBoundingClientRect();
+  accessPointer.x = (event.clientX - bounds.left) / bounds.width;
+  accessPointer.y = (event.clientY - bounds.top) / bounds.height;
+  accountCard.style.setProperty("--portal-x", `${accessPointer.x * 100}%`);
+  accountCard.style.setProperty("--portal-y", `${accessPointer.y * 100}%`);
+});
 
 function getProfile() {
   try {
@@ -362,7 +440,7 @@ function getProfile() {
 function renderProfile() {
   const profile = getProfile();
   $$('[data-account-label]').forEach((node) => {
-    node.textContent = profile?.name || "登录 / 注册";
+    node.textContent = profile?.name || "进入 Z.ONE";
   });
   $$('[data-points]').forEach((node) => {
     node.textContent = `${profile?.points || 0} pts`;
@@ -374,15 +452,20 @@ function openAccount() {
   accountForm.hidden = Boolean(profile);
   accountSuccess.hidden = !profile;
   if (profile) $("[data-welcome-name]").textContent = `${profile.name}，欢迎回来`;
-  accountDialog.showModal();
+  if (!accountDialog.open) accountDialog.showModal();
+  startAccessField();
 }
 
 $$('[data-open-account]').forEach((button) => button.addEventListener("click", openAccount));
-$$('[data-close-account]').forEach((button) => button.addEventListener("click", () => accountDialog.close()));
+function closeAccount() {
+  accountDialog?.close();
+}
+$$('[data-close-account]').forEach((button) => button.addEventListener("click", closeAccount));
 
 accountDialog?.addEventListener("click", (event) => {
-  if (event.target === accountDialog) accountDialog.close();
+  if (event.target === accountDialog) closeAccount();
 });
+accountDialog?.addEventListener("close", stopAccessField);
 
 accountForm?.addEventListener("submit", (event) => {
   event.preventDefault();

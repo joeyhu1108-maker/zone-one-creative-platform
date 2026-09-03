@@ -31,7 +31,7 @@
       <a href="library/">设计资源库</a>
     </nav>
     <button class="account-trigger" type="button" data-open-account>
-      <span data-account-label>登录 / 注册</span><b data-points>0 pts</b>
+      <span data-account-label>进入 Z.ONE</span><b data-points>0 pts</b>
     </button>
   </header>
 
@@ -240,16 +240,47 @@
   </footer>
 
   <dialog class="account-dialog" aria-labelledby="account-title">
-    <button class="dialog-close" type="button" data-close-account aria-label="关闭">×</button>
-    <div class="dialog-mark">Z.ONE / MEMBER 001</div>
-    <h2 id="account-title">先建立一个<br>体验账号。</h2>
-    <p>当前版本只把昵称与积分保存在这个浏览器里，不会上传到服务器。</p>
-    <form id="account-form">
-      <label>你的昵称<input id="account-name" name="name" required maxlength="24" placeholder="怎么称呼你"></label>
-      <label>你的身份<select id="account-role" name="role"><option>第一次使用 AI 创作工具</option><option>经常使用 Codex</option><option>设计师 / 创作者</option></select></label>
-      <button class="button primary" type="submit">领取 20 个体验积分</button>
-    </form>
-    <div class="account-success" hidden><span>WELCOME</span><h3 data-welcome-name>欢迎加入</h3><p>你的体验积分已经记录在当前浏览器。</p><button class="button ghost" type="button" data-close-account>继续浏览</button></div>
+    <div class="account-shell">
+      <button class="dialog-close" type="button" data-close-account aria-label="关闭登录引导">×</button>
+      <section class="account-intro">
+        <div class="account-intro-top"><strong>Z.ONE</strong><span>CREATIVE ACCESS / 001</span></div>
+        <div class="account-intro-copy">
+          <p class="account-status"><i></i> CREATIVE SYSTEM ONLINE</p>
+          <h2 id="account-title"><span>进入一个</span><span>把灵感做成</span><span>作品的场域。</span></h2>
+          <p>一个账号，连接 AI造物社、造物门诊与设计资源库。先领取体验积分，再从最适合你的入口开始。</p>
+        </div>
+        <dl class="account-specs">
+          <div><dt>20</dt><dd>体验积分</dd></div>
+          <div><dt>03</dt><dd>创作入口</dd></div>
+          <div><dt>LOCAL</dt><dd>仅存本机</dd></div>
+        </dl>
+      </section>
+
+      <section class="account-portal" aria-label="Z.ONE 体验账号入口">
+        <div class="account-card-shell">
+          <div class="account-card">
+            <canvas id="access-canvas" aria-hidden="true"></canvas>
+            <div class="account-card-content">
+              <div class="account-card-head"><span>◉ SECURE / LOCAL</span><span>MEMBER / 01</span></div>
+              <div class="account-card-title"><span>Z.ONE ACCESS</span><strong>CREATOR<br>CORE</strong></div>
+              <form id="account-form">
+                <label><span>你的昵称 / NAME</span><input id="account-name" name="name" required maxlength="24" autocomplete="nickname" placeholder="怎么称呼你"></label>
+                <label><span>你的身份 / ROLE</span><select id="account-role" name="role"><option>第一次使用 AI 创作工具</option><option>经常使用 Codex</option><option>设计师 / 创作者</option></select></label>
+                <button class="account-submit" type="submit"><span>领取 20 个体验积分</span><b>→</b></button>
+                <p class="account-privacy">不需要手机号。昵称、身份与积分只保存在当前浏览器。</p>
+              </form>
+              <div class="account-success" hidden>
+                <span>ACCESS GRANTED</span>
+                <h3 data-welcome-name>欢迎加入</h3>
+                <p>20 个体验积分已经记录。现在去选择你的第一个创作入口。</p>
+                <button class="account-submit" type="button" data-close-account><span>进入 Z.ONE</span><b>→</b></button>
+              </div>
+              <div class="account-card-foot"><span>RES. 99.8</span><span>3 MODULES</span><span>LAT. 0.01</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   </dialog>
 
   <div class="toast" role="status" aria-live="polite"></div>
