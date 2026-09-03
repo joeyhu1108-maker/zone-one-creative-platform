@@ -39,6 +39,9 @@ async function inspectHome(page, viewport, suffix) {
   assert.equal(await page.locator('.support-contact img').getAttribute("src"), "assets/joey-wechat-qr.jpg");
   assert.equal(await page.locator("main > .school, main > .clinic, main > .library, main > .vibe-motion").count(), 0);
   assert.equal(await page.locator("#kinetic-canvas").count(), 1);
+  assert.equal(await page.locator(".hero .button.primary:visible").count(), 1);
+  assert.equal(await page.locator(".hero-router-cta").innerText(), "告诉我你现在卡在哪");
+  assert.match(await page.locator(".hero-school-shortcut").innerText(), /直接进入 AI造物社/);
   await page.waitForFunction(() => document.querySelector("#kinetic-canvas")?.dataset.fluidReady === "true"
     || document.querySelector(".hero")?.classList.contains("fluid-failed"));
 
@@ -70,7 +73,23 @@ async function inspectHome(page, viewport, suffix) {
   await page.locator('[data-filter="all"]').click();
   assert.equal(await page.locator("[data-kind]:visible").count(), 5);
 
-  await page.locator("[data-open-account]").first().click();
+  await page.locator("[data-open-router]").first().click();
+  assert.equal(await page.locator(".route-dialog").isVisible(), true);
+  assert.equal(await page.locator("[data-route-choice]").count(), 3);
+  const routeTargets = await page.locator("[data-route-choice]").evaluateAll((nodes) => nodes.map((node) => {
+    const rect = node.getBoundingClientRect();
+    return { width: rect.width, height: rect.height };
+  }));
+  assert.ok(routeTargets.every(({ width, height }) => width >= 44 && height >= 44));
+  await page.locator('[data-route-choice="not-started"]').click();
+  assert.equal(new URL(page.url()).pathname, "/");
+  assert.match(await page.locator("[data-route-result]").innerText(), /AI造物社[\s\S]*第一件/);
+  await page.waitForTimeout(20);
+  await page.screenshot({ path: path.join(outputDir, `entry-router-${suffix}.png`) });
+  await page.locator("[data-route-confirm]").click();
+  await page.locator("[data-route-benefit]").waitFor({ state: "visible" });
+  assert.match(await page.locator("[data-route-benefit]").innerText(), /领取 20 个体验积分[\s\S]*暂不领取/);
+  await page.locator("[data-route-claim]").click();
   assert.equal(await page.locator(".account-dialog").isVisible(), true);
   assert.match(await page.locator("#account-title").innerText(), /把灵感做成/);
   await page.waitForFunction(() => document.querySelector(".account-dialog")?.dataset.accessReady === "true");
@@ -78,9 +97,15 @@ async function inspectHome(page, viewport, suffix) {
   await page.screenshot({ path: path.join(outputDir, `aethe-access-${suffix}.png`) });
   await page.locator("#account-name").fill("测试创作者");
   await page.locator("#account-form .account-submit").click();
+  await page.locator(".account-success").waitFor({ state: "visible" });
   assert.match(await page.locator(".account-success").innerText(), /测试创作者，欢迎加入/);
   assert.equal(await page.locator("[data-points]").innerText(), "20 pts");
   await page.locator("[data-close-account]").first().click();
+  const analytics = await page.evaluate(() => window.__zoneAnalytics.map(({ event }) => event));
+  assert.ok(analytics.includes("entry_router_open"));
+  assert.ok(analytics.includes("entry_option_select"));
+  assert.ok(analytics.includes("entry_recommend_confirm"));
+  assert.equal(await page.evaluate(() => JSON.stringify(window.__zoneAnalytics).includes("测试创作者")), false);
 
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   assert.ok(overflow <= 1, `home horizontal overflow should be absent, got ${overflow}px`);
@@ -91,8 +116,9 @@ async function inspectHome(page, viewport, suffix) {
 async function inspectSchool(page, viewport, suffix) {
   await page.setViewportSize(viewport);
   const errors = watchConsole(page);
-  await open(page, "school/");
+  await open(page, "school/?entry=not-started");
   await page.locator("#module-title").waitFor();
+  assert.ok(await page.evaluate(() => window.__zoneAnalytics.some(({ event, module }) => event === "module_arrive" && module === "AI造物社")));
   assert.match(await page.locator("body").innerText(), /Z\.ONE 总站[\s\S]*AI造物社[\s\S]*Eazo \/ Codex \/ Vibe Motion/);
   assert.equal(await page.locator('.hierarchy-line li[aria-current="step"]').innerText(), "02\nAI造物社\n选择课程");
   assert.equal(await page.locator("#eazo").getAttribute("href"), "https://ai-zaowushe-creator-course.pages.dev/");
@@ -105,6 +131,10 @@ async function inspectSchool(page, viewport, suffix) {
   assert.equal(await page.locator('[data-level-panel="beginner"]').isVisible(), true);
   const returnPath = await page.locator(".module-return").evaluate((node) => new URL(node.href).pathname);
   assert.equal(returnPath, "/");
+  await page.locator(".module-return").click();
+  assert.equal(await page.locator('.route-option[aria-pressed="true"]').getAttribute("data-route-choice"), "not-started");
+  await page.keyboard.press("Escape");
+  assert.equal(await page.locator(".route-dialog").isVisible(), false);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   assert.ok(overflow <= 1, `school horizontal overflow should be absent, got ${overflow}px`);
   assert.deepEqual(errors, [], `school console errors: ${errors.join(" | ")}`);
@@ -121,8 +151,40 @@ async function inspectClinic(page, viewport, suffix) {
   await page.locator("#clinic-task").fill("找到并开始生成");
   await page.locator(".clinic-submit").click();
   assert.match(await page.locator("[data-report-title]").innerText(), /找到并开始生成/);
+  assert.ok(await page.evaluate(() => window.__zoneAnalytics.some(({ event, module }) => event === "first_task_complete" && module === "造物门诊")));
   assert.deepEqual(errors, [], `clinic console errors: ${errors.join(" | ")}`);
   await page.screenshot({ path: path.join(outputDir, `hierarchy-clinic-${suffix}.png`), fullPage: true });
+}
+
+async function inspectStorageRecovery(browser) {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: "reduce" });
+  const page = await context.newPage();
+  await page.addInitScript(() => {
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function setItem(key, value) {
+      if (key === "zone-one-profile") throw new DOMException("Storage disabled", "QuotaExceededError");
+      return originalSetItem.call(this, key, value);
+    };
+  });
+  const errors = watchConsole(page);
+  await open(page, "./");
+  await page.locator("[data-open-router]").first().click();
+  await page.locator('[data-route-choice="making"]').click();
+  await page.locator("[data-route-confirm]").click();
+  await page.locator("[data-route-benefit]").waitFor({ state: "visible" });
+  await page.locator("[data-route-claim]").click();
+  await page.locator("#account-name").fill("未丢失的昵称");
+  await page.locator("#account-form .account-submit").click();
+  await page.waitForFunction(() => document.querySelector(".account-dialog")?.dataset.accountState === "error");
+  await page.locator("[data-account-recovery]").waitFor({ state: "visible" });
+  assert.equal(await page.locator("#account-name").inputValue(), "未丢失的昵称");
+  assert.match(await page.locator("[data-account-status]").innerText(), /输入仍在页面中/);
+  assert.equal(await page.locator("[data-account-retry]").isVisible(), true);
+  assert.equal(await page.locator('[data-account-recovery] [data-account-skip]').isVisible(), true);
+  await page.locator('[data-account-recovery] [data-account-skip]').click();
+  await page.waitForURL(/\/clinic\/\?entry=making/);
+  assert.deepEqual(errors, [], `storage recovery console errors: ${errors.join(" | ")}`);
+  await context.close();
 }
 
 async function inspectLibrary(page, viewport, suffix) {
@@ -150,6 +212,7 @@ async function main() {
       await page.close();
     }
   }
+  await inspectStorageRecovery(browser);
   await browser.close();
   process.stdout.write(`Z.ONE hierarchy smoke test passed: ${baseURL}\n`);
 }

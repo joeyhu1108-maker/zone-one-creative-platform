@@ -31,7 +31,7 @@
       <a href="library/">设计资源库</a>
     </nav>
     <button class="account-trigger" type="button" data-open-account>
-      <span data-account-label>进入 Z.ONE</span><b data-points>0 pts</b>
+      <span data-account-label>本机访问</span><b data-points hidden>20 pts</b>
     </button>
   </header>
 
@@ -44,16 +44,16 @@
         <h1 id="hero-title"><span>把灵感</span><span>做成作品<i>。</i></span></h1>
         <p class="hero-lead">从学习、动手，到交付前的一次诊断。三个入口，陪你把“我有个想法”推进到真正可以打开、操作和分享的结果。</p>
         <div class="hero-actions">
-          <a class="button primary" href="school/">进入 AI造物社</a>
-          <a class="button ghost" href="#platform-map">先选入口 ↓</a>
+          <button class="button primary hero-router-cta" type="button" data-open-router>告诉我你现在卡在哪</button>
+          <a class="hero-school-shortcut" href="school/">直接进入 AI造物社 <span aria-hidden="true">↗</span></a>
         </div>
       </div>
       <div class="hero-object" aria-label="从灵感到作品的动态示意">
         <div class="object-label"><span><i></i> LIVE CREATIVE FIELD</span><span>WEBGL / FLUID 01</span></div>
-        <div class="object-core">
-          <div><b>01</b><span>灵感 / IDEA</span></div>
-          <div><b>02</b><span>制作 / MAKE</span></div>
-          <div><b>03</b><span>分享 / SHARE</span></div>
+        <div class="object-core" aria-label="Z.ONE 三步方法">
+          <article tabindex="0"><b>01</b><span>灵感 / IDEA</span><small>适合：缺少参考<br>去：设计资源库</small></article>
+          <article tabindex="0"><b>02</b><span>制作 / MAKE</span><small>适合：第一次动手<br>去：AI造物社</small></article>
+          <article tabindex="0"><b>03</b><span>验收 / REVIEW</span><small>适合：制作卡住<br>去：造物门诊</small></article>
         </div>
         <div class="object-caption"><span>MOVE POINTER → FIELD</span><b>OBSERVE / MAKE / SHARE</b></div>
       </div>
@@ -247,7 +247,7 @@
         <div class="account-intro-copy">
           <p class="account-status"><i></i> CREATIVE SYSTEM ONLINE</p>
           <h2 id="account-title"><span>进入一个</span><span>把灵感做成</span><span>作品的场域。</span></h2>
-          <p>一个账号，连接 AI造物社、造物门诊与设计资源库。先领取体验积分，再从最适合你的入口开始。</p>
+          <p>先确认最适合你的创作入口，再决定是否领取本机权益。昵称、身份与积分都只保存在当前浏览器。</p>
         </div>
         <dl class="account-specs">
           <div><dt>20</dt><dd>体验积分</dd></div>
@@ -266,15 +266,22 @@
               <form id="account-form">
                 <label><span>你的昵称 / NAME</span><input id="account-name" name="name" required maxlength="24" autocomplete="nickname" placeholder="怎么称呼你"></label>
                 <label><span>你的身份 / ROLE</span><select id="account-role" name="role"><option>第一次使用 AI 创作工具</option><option>经常使用 Codex</option><option>设计师 / 创作者</option></select></label>
-                <button class="account-submit" type="submit"><span>领取 20 个体验积分</span><b>→</b></button>
+                <p class="account-form-status" data-account-status role="status" aria-live="polite" hidden></p>
+                <button class="account-submit" type="submit" data-account-state="idle"><span>领取 20 个体验积分</span><b>→</b></button>
+                <div class="account-recovery" data-account-recovery hidden>
+                  <button type="button" data-account-retry>重试保存</button>
+                  <button type="button" data-account-skip>暂不领取，直接浏览</button>
+                </div>
+                <button class="account-skip" type="button" data-account-skip>暂不领取，直接浏览</button>
                 <p class="account-privacy">不需要手机号。昵称、身份与积分只保存在当前浏览器。</p>
               </form>
               <div class="account-success" hidden>
                 <span>ACCESS GRANTED</span>
                 <h3 data-welcome-name>欢迎加入</h3>
-                <p>20 个体验积分已经记录。现在去选择你的第一个创作入口。</p>
-                <button class="account-submit" type="button" data-close-account><span>进入 Z.ONE</span><b>→</b></button>
+                <p>20 个体验积分已经记录。现在进入你刚确认的创作入口。</p>
+                <button class="account-submit" type="button" data-account-continue><span>进入推荐模块</span><b>→</b></button>
               </div>
+              <button class="account-back" type="button" data-account-back>← 返回入口推荐</button>
               <div class="account-card-foot"><span>RES. 99.8</span><span>3 MODULES</span><span>LAT. 0.01</span></div>
             </div>
           </div>

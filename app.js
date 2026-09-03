@@ -254,11 +254,263 @@ const toast = $(".toast");
 let toastTimer;
 
 function showToast(message) {
+  if (!toast) return;
   toast.textContent = message;
   toast.classList.add("is-visible");
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => toast.classList.remove("is-visible"), 2200);
 }
+
+const routeOptions = {
+  "not-started": {
+    title: "还没开始",
+    situation: "有想法，但还不知道先做什么",
+    duration: "约 2–3 小时",
+    module: "AI造物社",
+    path: "school/",
+    reason: "先沿着一条清楚的学习与制作路径，把第一件能打开、操作和分享的作品做出来。"
+  },
+  making: {
+    title: "制作卡住",
+    situation: "已经在做，但页面、交互或结果不够清楚",
+    duration: "约 10 分钟",
+    module: "造物门诊",
+    path: "clinic/",
+    reason: "带着当前页面和真实任务，先找出最影响体验的三个卡点，再继续修改。"
+  },
+  reference: {
+    title: "寻找参考",
+    situation: "需要视觉、交互、动效或工具方向",
+    duration: "约 5–15 分钟",
+    module: "设计资源库",
+    path: "library/",
+    reason: "按当前任务找灵感、界面案例与制作工具，减少没有目的的浏览。"
+  }
+};
+
+const routeStorageKey = "zone-one-entry";
+let routeSelection = null;
+let routeReturnFocus = null;
+
+function readRouteSelection() {
+  if (routeOptions[routeSelection]) return routeSelection;
+  const fromUrl = new URLSearchParams(location.search).get("entry");
+  if (routeOptions[fromUrl]) return fromUrl;
+  try {
+    const stored = localStorage.getItem(routeStorageKey);
+    return routeOptions[stored] ? stored : null;
+  } catch {
+    return routeSelection;
+  }
+}
+
+function saveRouteSelection(choice) {
+  routeSelection = choice;
+  try {
+    localStorage.setItem(routeStorageKey, choice);
+  } catch {
+    // The in-memory choice and the destination URL keep the route recoverable.
+  }
+}
+
+function trackZoneEvent(name, data = {}) {
+  const allowedKeys = ["choice", "module", "source", "task"];
+  const payload = { event: name, timestamp: new Date().toISOString() };
+  allowedKeys.forEach((key) => {
+    if (typeof data[key] === "string") payload[key] = data[key];
+  });
+  window.__zoneAnalytics = window.__zoneAnalytics || [];
+  window.__zoneAnalytics.push(payload);
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push(payload);
+  window.dispatchEvent(new CustomEvent("zone:analytics", { detail: payload }));
+  try {
+    const previous = JSON.parse(localStorage.getItem("zone-one-events") || "[]");
+    localStorage.setItem("zone-one-events", JSON.stringify([...previous, payload].slice(-50)));
+  } catch {
+    // Analytics must never block the creation path.
+  }
+}
+
+function trapModalFocus(dialog, event) {
+  if (event.key !== "Tab") return;
+  const focusable = $$('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])', dialog)
+    .filter((node) => !node.hidden && node.getClientRects().length);
+  if (!focusable.length) return;
+  const first = focusable[0];
+  const last = focusable.at(-1);
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
+
+document.body.insertAdjacentHTML("beforeend", `
+  <dialog class="route-dialog" aria-labelledby="route-title">
+    <div class="route-panel">
+      <button class="route-close" type="button" data-close-router aria-label="关闭入口选择">×</button>
+      <div data-route-choice-step>
+        <header class="route-head">
+          <p class="route-kicker">FIRST CREATION / 01</p>
+          <h2 id="route-title">你现在卡在哪？</h2>
+          <p>选最接近的一项。先看推荐理由，确认后再进入。</p>
+        </header>
+        <div class="route-options" aria-label="选择当前卡点">
+          <button class="route-option" type="button" data-route-choice="not-started" aria-pressed="false">
+            <span class="route-option-index">01</span><span class="route-option-copy"><strong>还没开始</strong><small>有想法，但还不知道先做什么</small></span><time>约 2–3 小时</time>
+          </button>
+          <button class="route-option" type="button" data-route-choice="making" aria-pressed="false">
+            <span class="route-option-index">02</span><span class="route-option-copy"><strong>制作卡住</strong><small>已经在做，但页面、交互或结果不够清楚</small></span><time>约 10 分钟</time>
+          </button>
+          <button class="route-option" type="button" data-route-choice="reference" aria-pressed="false">
+            <span class="route-option-index">03</span><span class="route-option-copy"><strong>寻找参考</strong><small>需要视觉、交互、动效或工具方向</small></span><time>约 5–15 分钟</time>
+          </button>
+        </div>
+        <section class="route-result" data-route-result aria-live="polite" hidden>
+          <span class="route-result-label">推荐入口</span>
+          <h3 data-route-module></h3>
+          <p data-route-reason></p>
+        </section>
+        <p class="route-error" data-route-error role="alert" hidden></p>
+        <button class="route-confirm" type="button" data-route-confirm disabled><span>先选择一个卡点</span></button>
+      </div>
+      <section class="route-benefit" data-route-benefit hidden>
+        <span class="route-benefit-badge">推荐已确认</span>
+        <h3>先去 <span data-route-benefit-module></span></h3>
+        <p>入口已经为你保留。你可以领取昵称、身份和 20 个本机体验积分，也可以直接开始。</p>
+        <button class="route-claim" type="button" data-route-claim>领取 20 个体验积分</button>
+        <button class="route-skip" type="button" data-route-skip>暂不领取，直接前往</button>
+        <button class="route-reset" type="button" data-route-reset>换一个入口</button>
+      </section>
+    </div>
+  </dialog>
+`);
+
+const routeDialog = $(".route-dialog");
+const routeChoiceStep = $("[data-route-choice-step]", routeDialog);
+const routeBenefit = $("[data-route-benefit]", routeDialog);
+const routeResult = $("[data-route-result]", routeDialog);
+const routeConfirm = $("[data-route-confirm]", routeDialog);
+const routeError = $("[data-route-error]", routeDialog);
+
+function renderRouteSelection() {
+  const option = routeOptions[routeSelection];
+  $$('[data-route-choice]', routeDialog).forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.routeChoice === routeSelection));
+  });
+  routeResult.hidden = !option;
+  routeConfirm.disabled = !option;
+  $("[data-route-module]", routeDialog).textContent = option?.module || "";
+  $("[data-route-reason]", routeDialog).textContent = option?.reason || "";
+  $("span", routeConfirm).textContent = option ? `确认，进入${option.module}` : "先选择一个卡点";
+}
+
+function showRouteChoices() {
+  routeChoiceStep.hidden = false;
+  routeBenefit.hidden = true;
+  routeConfirm.dataset.loading = "false";
+  routeConfirm.setAttribute("aria-busy", "false");
+  routeConfirm.disabled = !routeSelection;
+  routeError.hidden = true;
+  renderRouteSelection();
+}
+
+function openRouter(eventOrSource) {
+  if (eventOrSource?.preventDefault) eventOrSource.preventDefault();
+  const source = eventOrSource?.currentTarget?.classList?.contains("module-return") ? "module" : "hero";
+  routeReturnFocus = eventOrSource?.currentTarget || document.activeElement;
+  routeSelection = readRouteSelection();
+  showRouteChoices();
+  if (!routeDialog.open) routeDialog.showModal();
+  trackZoneEvent("entry_router_open", { source, choice: routeSelection || "none" });
+  requestAnimationFrame(() => {
+    const selected = routeSelection && $(`[data-route-choice="${routeSelection}"]`, routeDialog);
+    (selected || $("[data-route-choice]", routeDialog))?.focus();
+  });
+}
+
+function routeUrl(choice, extra = {}) {
+  const option = routeOptions[choice];
+  if (!option) return null;
+  const target = new URL(`/${option.path}`, location.origin);
+  target.searchParams.set("entry", choice);
+  Object.entries(extra).forEach(([key, value]) => target.searchParams.set(key, value));
+  return target;
+}
+
+function navigateToRoute(choice = routeSelection) {
+  const target = routeUrl(choice);
+  if (!target) return false;
+  try {
+    location.assign(target.href);
+    return true;
+  } catch {
+    routeChoiceStep.hidden = false;
+    routeBenefit.hidden = true;
+    routeError.textContent = "页面暂时没有跳转。你的选择已经保留，请重试或关闭后继续浏览。";
+    routeError.hidden = false;
+    routeConfirm.disabled = false;
+    routeConfirm.dataset.loading = "false";
+    routeConfirm.setAttribute("aria-busy", "false");
+    $("span", routeConfirm).textContent = "重试进入推荐模块";
+    return false;
+  }
+}
+
+$$('[data-open-router]').forEach((button) => button.addEventListener("click", openRouter));
+$$('[data-route-choice]', routeDialog).forEach((button) => {
+  button.addEventListener("click", () => {
+    saveRouteSelection(button.dataset.routeChoice);
+    renderRouteSelection();
+    trackZoneEvent("entry_option_select", { choice: routeSelection, module: routeOptions[routeSelection].module });
+  });
+});
+
+routeConfirm.addEventListener("click", () => {
+  if (!routeSelection || routeConfirm.dataset.loading === "true") return;
+  const option = routeOptions[routeSelection];
+  routeConfirm.dataset.loading = "true";
+  routeConfirm.setAttribute("aria-busy", "true");
+  routeConfirm.disabled = true;
+  $("span", routeConfirm).textContent = "正在确认…";
+  trackZoneEvent("entry_recommend_confirm", { choice: routeSelection, module: option.module });
+  setTimeout(() => {
+    if (getProfile()) {
+      navigateToRoute();
+      return;
+    }
+    routeChoiceStep.hidden = true;
+    routeBenefit.hidden = false;
+    routeConfirm.setAttribute("aria-busy", "false");
+    $("[data-route-benefit-module]", routeDialog).textContent = option.module;
+    $("[data-route-claim]", routeDialog).focus();
+  }, reducedMotion ? 0 : 180);
+});
+
+$("[data-route-claim]", routeDialog).addEventListener("click", () => {
+  routeDialog.close();
+  openAccount(null, true);
+});
+$("[data-route-skip]", routeDialog).addEventListener("click", () => navigateToRoute());
+$("[data-route-reset]", routeDialog).addEventListener("click", () => {
+  showRouteChoices();
+  $(`[data-route-choice="${routeSelection}"]`, routeDialog)?.focus();
+});
+$("[data-close-router]", routeDialog).addEventListener("click", () => routeDialog.close());
+routeDialog.addEventListener("click", (event) => {
+  if (event.target === routeDialog) routeDialog.close();
+});
+routeDialog.addEventListener("keydown", (event) => trapModalFocus(routeDialog, event));
+routeDialog.addEventListener("close", () => routeReturnFocus?.focus?.());
+
+routeSelection = readRouteSelection();
+const currentModule = document.body.classList.contains("module-school-page") ? "AI造物社"
+  : document.body.classList.contains("module-clinic-page") ? "造物门诊"
+    : document.body.classList.contains("module-library-page") ? "设计资源库" : null;
+if (currentModule) trackZoneEvent("module_arrive", { module: currentModule, choice: routeSelection || "direct" });
 
 $$('[data-copy]').forEach((button) => {
   button.addEventListener("click", async () => {
@@ -327,6 +579,7 @@ $(".clinic-submit")?.addEventListener("click", () => {
 
   $("[data-report-title]").textContent = `${user}，能否顺利${task}？`;
   $("[data-report-copy]").textContent = `你选择了“${evidence}”。正式门诊会结合真实画面，只返回三个最影响任务的卡点。`;
+  trackZoneEvent("first_task_complete", { module: "造物门诊", task: "generate_triage_question" });
   showToast("预诊问题已生成");
 });
 
@@ -345,6 +598,14 @@ resourceInput?.addEventListener("input", () => {
   resourceCount.textContent = `${visible} 个精选入口`;
   noResults.hidden = visible !== 0;
 });
+
+$$('.resource-card[href]').forEach((card) => card.addEventListener("click", () => {
+  trackZoneEvent("first_task_complete", { module: "设计资源库", task: "open_resource" });
+}));
+
+$$('.course-list a[href]').forEach((course) => course.addEventListener("click", () => {
+  trackZoneEvent("first_task_complete", { module: "AI造物社", task: "open_course" });
+}));
 
 const accountDialog = $(".account-dialog");
 const accountForm = $("#account-form");
@@ -531,49 +792,161 @@ function getProfile() {
   }
 }
 
+function saveProfile(profile) {
+  try {
+    localStorage.setItem("zone-one-profile", JSON.stringify(profile));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function renderProfile() {
   const profile = getProfile();
   $$('[data-account-label]').forEach((node) => {
-    node.textContent = profile?.name || "进入 Z.ONE";
+    node.textContent = profile ? "已领取" : "本机访问";
   });
   $$('[data-points]').forEach((node) => {
-    node.textContent = `${profile?.points || 0} pts`;
+    node.textContent = `${profile?.points || 20} pts`;
+    node.hidden = !profile;
   });
 }
 
-function openAccount() {
+let accountReturnFocus = null;
+
+function openAccount(event, fromRouter = false) {
+  event?.preventDefault?.();
+  routeSelection = routeSelection || readRouteSelection();
+  if (!routeSelection) {
+    showToast("先选择一个创作入口，再领取体验积分");
+    openRouter(event || "account");
+    return;
+  }
+  if (!accountDialog) {
+    const home = new URL("/", location.origin);
+    home.searchParams.set("entry", routeSelection);
+    home.searchParams.set("claim", "1");
+    location.assign(home.href);
+    return;
+  }
+  accountReturnFocus = event?.currentTarget || (fromRouter ? routeReturnFocus : document.activeElement);
   const profile = getProfile();
   accountForm.hidden = Boolean(profile);
   accountSuccess.hidden = !profile;
   if (profile) $("[data-welcome-name]").textContent = `${profile.name}，欢迎回来`;
+  if (!profile && accountDialog.dataset.accountState !== "error") {
+    accountDialog.dataset.accountState = "idle";
+    $("[data-account-status]").hidden = true;
+    $("[data-account-recovery]").hidden = true;
+    const submit = $(".account-submit", accountForm);
+    submit.disabled = false;
+    submit.dataset.accountState = "idle";
+    $("span", submit).textContent = "领取 20 个体验积分";
+  }
   if (!accountDialog.open) accountDialog.showModal();
   startAccessField();
+  requestAnimationFrame(() => (profile ? $("[data-account-continue]") : accountName)?.focus());
 }
 
 $$('[data-open-account]').forEach((button) => button.addEventListener("click", openAccount));
 function closeAccount() {
-  accountDialog?.close();
+  if (accountDialog?.open) accountDialog.close();
 }
 $$('[data-close-account]').forEach((button) => button.addEventListener("click", closeAccount));
 
 accountDialog?.addEventListener("click", (event) => {
   if (event.target === accountDialog) closeAccount();
 });
-accountDialog?.addEventListener("close", stopAccessField);
+accountDialog?.addEventListener("keydown", (event) => trapModalFocus(accountDialog, event));
+accountDialog?.addEventListener("close", () => {
+  stopAccessField();
+  accountReturnFocus?.focus?.();
+});
 
-accountForm?.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const profile = {
-    name: accountName.value.trim(),
-    role: $("#account-role").value,
-    points: 20
-  };
-  localStorage.setItem("zone-one-profile", JSON.stringify(profile));
+let pendingProfile = null;
+
+function showAccountSaveError() {
+  const submit = $(".account-submit", accountForm);
+  const status = $("[data-account-status]");
+  accountDialog.dataset.accountState = "error";
+  submit.dataset.accountState = "error";
+  submit.setAttribute("aria-busy", "false");
+  submit.disabled = true;
+  $("span", submit).textContent = "保存失败";
+  status.textContent = "本机存储暂时不可用。你的输入仍在页面中，可以重试或暂不领取。";
+  status.hidden = false;
+  $("[data-account-recovery]").hidden = false;
+  $("[data-account-retry]").focus();
+}
+
+function finishAccountSave(profile) {
+  const submit = $(".account-submit", accountForm);
+  accountDialog.dataset.accountState = "success";
+  submit.dataset.accountState = "success";
+  submit.setAttribute("aria-busy", "false");
   accountForm.hidden = true;
   accountSuccess.hidden = false;
   $("[data-welcome-name]").textContent = `${profile.name}，欢迎加入`;
   renderProfile();
   showToast("20 个体验积分已记录");
+  $("[data-account-continue]").focus();
+}
+
+function persistPendingProfile() {
+  if (!pendingProfile) return;
+  const submit = $(".account-submit", accountForm);
+  accountDialog.dataset.accountState = "loading";
+  submit.dataset.accountState = "loading";
+  submit.setAttribute("aria-busy", "true");
+  submit.disabled = true;
+  $("span", submit).textContent = "正在保存…";
+  $("[data-account-status]").hidden = true;
+  $("[data-account-recovery]").hidden = true;
+  setTimeout(() => {
+    if (saveProfile(pendingProfile)) finishAccountSave(pendingProfile);
+    else showAccountSaveError();
+  }, reducedMotion ? 0 : 280);
+}
+
+accountForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  pendingProfile = {
+    name: accountName.value.trim(),
+    role: $("#account-role").value,
+    points: 20
+  };
+  persistPendingProfile();
+});
+
+$("[data-account-retry]")?.addEventListener("click", () => {
+  accountDialog.dataset.accountState = "retry";
+  const submit = $(".account-submit", accountForm);
+  submit.dataset.accountState = "retry";
+  submit.setAttribute("aria-busy", "false");
+  $("span", submit).textContent = "正在重试…";
+  setTimeout(persistPendingProfile, 0);
+});
+
+$$('[data-account-skip]').forEach((button) => button.addEventListener("click", () => {
+  accountDialog.dataset.accountState = "skip";
+  const submit = $(".account-submit", accountForm);
+  if (submit) {
+    submit.dataset.accountState = "skip";
+    submit.setAttribute("aria-busy", "false");
+  }
+  closeAccount();
+  navigateToRoute();
+}));
+
+$("[data-account-continue]")?.addEventListener("click", () => navigateToRoute());
+$("[data-account-back]")?.addEventListener("click", () => {
+  closeAccount();
+  setTimeout(() => openRouter("account"), 0);
 });
 
 renderProfile();
+
+const initialParams = new URLSearchParams(location.search);
+if (initialParams.get("claim") === "1" && routeSelection && !getProfile()) {
+  openAccount(null, true);
+}
