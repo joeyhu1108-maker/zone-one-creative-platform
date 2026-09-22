@@ -1,0 +1,74 @@
+{
+  "title": "未完成的现场｜创作开放日",
+  "status": "虚构演示；实际完成设计、范围改稿与 SVG 导出；未获用户视觉采用",
+  "source": [
+    "source/event.json",
+    "source/visual-system.md",
+    "source/render.mjs"
+  ],
+  "revision": {
+    "request": "主海报与日程卡：开放日 → 创作开放日；入口导视保留“开放日”用于远距识别",
+    "scope": [
+      "main-poster",
+      "program-card"
+    ],
+    "exception": [
+      "entry-sign"
+    ],
+    "futureDefault": false
+  },
+  "files": [
+    {
+      "id": "main-poster",
+      "size": [
+        1080,
+        1440
+      ],
+      "format": "SVG",
+      "status": "演示成品／未采用",
+      "source": "source/render.mjs",
+      "before": "history/01-main-poster-v1.svg",
+      "output": "exports/01-main-poster.svg",
+      "changedInRevision": true,
+      "beforeSha256": "b25a238bbf8979b715a01809f84d175682773b406c09a06d22526ff90beacb0a",
+      "outputSha256": "6c774ac7e887136af4b9ac679924acf7f6eb3f9fedea142b3ff01cd5740479b7"
+    },
+    {
+      "id": "program-card",
+      "size": [
+        1080,
+        1440
+      ],
+      "format": "SVG",
+      "status": "演示成品／未采用",
+      "source": "source/render.mjs",
+      "before": "history/02-program-card-v1.svg",
+      "output": "exports/02-program-card.svg",
+      "changedInRevision": true,
+      "beforeSha256": "17881922616e9be117a5411047b9345d14f0efae968e3672b26f1bca2294fd31",
+      "outputSha256": "5174acca868d61941620525a7e9da3316f9a3ed1061842dc3c481f0ff30a21f8"
+    },
+    {
+      "id": "entry-sign",
+      "size": [
+        1600,
+        900
+      ],
+      "format": "SVG",
+      "status": "演示成品／未采用",
+      "source": "source/render.mjs",
+      "before": "history/03-entry-sign-v1.svg",
+      "output": "exports/03-entry-sign.svg",
+      "changedInRevision": false,
+      "beforeSha256": "d3f123c28407890407e14cb54130d69db36d7a0d71ba21670f2212d4272ae3f5",
+      "outputSha256": "d3f123c28407890407e14cb54130d69db36d7a0d71ba21670f2212d4272ae3f5"
+    }
+  ],
+  "checks": {
+    "count": 3,
+    "sizes": "3 个 SVG 均声明了像素尺寸与 viewBox",
+    "currentVersions": "2 个目标项已更新；入口导视与修改前 SHA-256 相同",
+    "dependency": "SVG 无外链图片或在线字体；文字为可编辑 text 元素",
+    "limits": "未进行印刷出血、CMYK 或实物检查"
+  }
+}

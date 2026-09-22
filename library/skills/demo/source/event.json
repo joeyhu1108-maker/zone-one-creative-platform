@@ -1,0 +1,16 @@
+{
+  "fictional": true,
+  "project": "未完成的现场",
+  "seriesTitleBefore": "开放日",
+  "seriesTitleAfter": "创作开放日",
+  "directionSignException": "开放日",
+  "date": "2026.10.25",
+  "hours": "14:00—19:00",
+  "venueName": "Z.ONE STUDIO",
+  "venueNote": "虚构场景",
+  "programme": [
+    {"time": "14:00", "english": "OPEN STUDIO", "chinese": "工作现场开放", "note": "看看作品如何从未完成开始"},
+    {"time": "16:00", "english": "SHOW & TELL", "chinese": "未完成分享", "note": "带着一个还在生长的想法"},
+    {"time": "18:00", "english": "COMMON TABLE", "chinese": "共同讨论", "note": "把下一步留给现场的人"}
+  ]
+}
