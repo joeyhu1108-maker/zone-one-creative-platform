@@ -5,6 +5,7 @@
   "description": "Z.ONE frontend hub for AI造物社, 造物门诊 and the design resource library.",
   "scripts": {
     "serve": "python3 -m http.server 8890",
-    "test": "node scripts/smoke.cjs"
+    "test": "node scripts/smoke.cjs",
+    "build:skills": "node scripts/build-skills.mjs"
   }
 }

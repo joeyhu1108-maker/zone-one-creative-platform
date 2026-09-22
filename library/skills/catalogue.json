@@ -1,0 +1,123 @@
+{
+  "version": 1,
+  "updated": "2026-09-23",
+  "skills": [
+    {
+      "id": "design-master-extension",
+      "title": "定稿延展",
+      "category": "系列物料",
+      "summary": "主视觉已经选好，把它延续到下一张、下一种尺寸。",
+      "input": "已采用的主视觉、可编辑源文件、活动资料与物料清单。",
+      "output": "固定与可变规则、系列物料、可继续修改的来源。",
+      "boundary": "只有平面图时需要重建母版；不会自动还原所有字体和图层。",
+      "prompt": "$design-master-extension 主视觉已采用，请用我附上的母版和嘉宾表延展 6 张嘉宾海报、1 张签到指引。沿用字体、色彩和 Logo；名字与介绍从表中读取。先检查最长姓名和介绍，保留每张可编辑来源。",
+      "repo": "zone-design-skills",
+      "path": "skills/design-master-extension",
+      "stage": "首发 · 规则已检查"
+    },
+    {
+      "id": "design-scoped-revision",
+      "title": "按范围改稿",
+      "category": "系列物料",
+      "summary": "一句“这些都改，但这一张保留”，准确落实到整套。",
+      "input": "当前物料、原始文件，以及本次要改什么和例外。",
+      "output": "受影响物料的修改、前后差异、后续是否沿用的规则。",
+      "boundary": "需要可访问的源文件；不会把讨论或喜欢误当作全套批准。",
+      "prompt": "$design-scoped-revision 所有嘉宾海报的姓名增大一级，以后新增嘉宾也沿用；第二张保持原样。主海报不改。请只修改相关字段，给我看前后差异。",
+      "repo": "zone-design-skills",
+      "path": "skills/design-scoped-revision",
+      "stage": "首发 · 规则已检查"
+    },
+    {
+      "id": "design-batch-delivery",
+      "title": "整套物料交付",
+      "category": "系列物料",
+      "summary": "改了哪几张，就重新出哪几张；成品和源文件对得上。",
+      "input": "物料清单、当前版本、导出格式与已有检查记录。",
+      "output": "成品、可编辑来源、版本清单与实际检查说明。",
+      "boundary": "需有实际导出工具；屏幕 PNG 不代表印刷文件已就绪。",
+      "prompt": "$design-batch-delivery 将当前 8 张物料整理成待审包。检查姓名、日期、尺寸和漏出；只重新导出发生变化的物料，附上同版源文件和清单。注明尚未采用的项目。",
+      "repo": "zone-design-skills",
+      "path": "skills/design-batch-delivery",
+      "stage": "首发 · 规则已检查"
+    },
+    {
+      "id": "zone-material-art",
+      "title": "材料艺术",
+      "category": "视觉创作",
+      "summary": "让材料的来历、结构和质感共同表达一个主题。",
+      "input": "主题、照片或文本，可用材料与想保留的关系。",
+      "output": "材料叙事方案、构图、生成提示词或作品。",
+      "boundary": "图像生成需要可用工具；装置方案不等于实物施工验证。",
+      "prompt": "$zone-material-art 以“被替代的劳动”为主题，用旧木板、工业网和透明树脂做一件材料艺术。先说明材料为什么出现，再给出构图和图像生成提示词。保留安静留白，不使用通用科幻符号。",
+      "repo": "ZONE-Material-art",
+      "path": ".",
+      "stage": "已有公开版本"
+    },
+    {
+      "id": "selective-ink-sketch",
+      "title": "取舍钢笔速写",
+      "category": "视觉创作",
+      "summary": "从照片里删掉干扰，用留白与有轻重的线条重画。",
+      "input": "一张真实照片；说明必须保留的主体与特征。",
+      "output": "原创单色钢笔速写，或可直接使用的编辑提示词。",
+      "boundary": "必须提供源照片；需要图像编辑工具才能生成成品。",
+      "prompt": "$selective-ink-sketch 把附上的建筑照片转成钢笔速写。保留主要轮廓与透视，删除杂乱背景，只设置一个密度中心；用纸面留白表现天空。",
+      "repo": "selective-ink-sketch",
+      "path": ".",
+      "stage": "已有公开版本"
+    },
+    {
+      "id": "joey-award-visual-director",
+      "title": "奖状与主视觉",
+      "category": "视觉创作",
+      "summary": "从完整文案出发，把奖状和活动主视觉做清楚。",
+      "input": "用途、完整文案、尺寸、风格与品牌资产。",
+      "output": "版式方案、背景方向、可编辑母版与可用工具支持的导出。",
+      "boundary": "中文姓名和日期单独排版；打印需求需另核对输出规格。",
+      "prompt": "$joey-award-visual-director 做一张 A4 竖版奖状。文案使用我附上的获奖名单与主办方信息，风格克制、有纸张质感，突出姓名与奖项，保留签名位置。先给可编辑版式。",
+      "repo": "joey-award-visual-director",
+      "path": ".",
+      "stage": "已有公开版本"
+    },
+    {
+      "id": "logo-identity-director",
+      "title": "Logo 与品牌识别",
+      "category": "品牌与网站",
+      "summary": "从品牌的真实用途，走到有依据的标志与识别方案。",
+      "input": "品牌名、业务、受众、使用场景和参考资料。",
+      "output": "研究依据、方向比较、标志方案与识别交付。",
+      "boundary": "需要真实品牌信息；设计检查不构成商标可注册保证。",
+      "prompt": "$logo-identity-director 为一个城市艺术共创社群设计 Logo。品牌资料在附件中，标志需要用于手机头像、海报和现场标识。先研究与比较方向，再展开我选中的方案。",
+      "repo": "logo-identity-director",
+      "path": ".",
+      "stage": "已有公开版本"
+    },
+    {
+      "id": "business-design-delivery",
+      "title": "商业设计交付",
+      "category": "品牌与网站",
+      "summary": "把业务需求变成可预览、可修改、可交接的设计。",
+      "input": "业务目标、目标用户、内容资料与交付约束。",
+      "output": "设计方向、对应设计产物、真实预览与交接说明。",
+      "boundary": "实现与部署取决于工具及授权；预览不等于正式上线。",
+      "prompt": "$business-design-delivery 为一场艺术共创活动做报名介绍页。用户需要理解活动、判断适不适合并找到报名入口。先整理信息优先级，再给可运行预览与交接文件。活动事实以附件为准。",
+      "repo": "Business-Design-Delivery",
+      "path": "business-design-delivery",
+      "stage": "已有公开版本"
+    },
+    {
+      "id": "gc-art-history-particle-play",
+      "title": "粒子艺术互动",
+      "category": "品牌与网站",
+      "summary": "把已有粒子地球做成能上手、能回应、能分享的体验。",
+      "input": "现有粒子地球或艺术地图项目、用户任务与运行环境。",
+      "output": "交互方案、可实现的创作回路与分享设计。",
+      "boundary": "面向已有项目；公开上传需要另有真实服务与审核机制。",
+      "prompt": "$gc-art-history-particle-play 基于当前粒子地球项目，设计一个手机上可以直接触摸、产生回应并保存个人画面的体验。先复用已有渲染器，区分即时体验和公开发布。",
+      "repo": "gc-art-history-particle-play",
+      "path": ".",
+      "stage": "已有公开版本"
+    }
+  ]
+}

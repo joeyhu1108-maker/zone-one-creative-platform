@@ -2,3 +2,4 @@
 qa/
 .wrangler/
 node_modules/
+dist/

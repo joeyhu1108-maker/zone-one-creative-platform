@@ -39,6 +39,24 @@ NODE_PATH=/path/to/playwright/node_modules node scripts/smoke.cjs
 
 ## 已有模块
 
+### 设计 Skill 用法库
+
+- 入口：[/library/skills/](https://zone-one-creative-platform.joeyhu1108.workers.dev/library/skills/)
+- 原始目录：[zone-design-skills](https://github.com/joeyhu1108-maker/zone-design-skills)，本次同步版本 `e35b2ff`。
+- 首批 9 个 Skill：已有 6 个公开仓库加 3 个新发布的系列物料 Skill。提供任务筛选、搜索、输入输出说明、复制用法及安装说明。
+- 本页为静态使用指南，不请求模型、不接收用户 API Key、不在网页中执行设计任务。
+
+更新目录时，先修改 `zone-design-skills/catalogue.json`，再将该文件同步到本站并重新构建页面：
+
+```bash
+node scripts/build-skills.mjs /path/to/zone-design-skills/catalogue.json
+node scripts/build-static.mjs
+```
+
+不传目录路径时，构建器使用已提交的 `library/skills/catalogue.json`。生成的 HTML 可在禁用 JavaScript 时阅读；JavaScript 仅负责筛选、复制与定位。发布目录仅包含明确列出的网页资产，不包含仓库历史和开发文件。
+
+使用已安装的 Wrangler 在正确 Cloudflare 账号执行 `wrangler deploy`。发布前核对 Worker 名称 `zone-one-creative-platform`；发布后检查总站 → 设计资源库 → 设计 Skill 的路径、搜索、展开用法与复制反馈。
+
 - [AI造物社 Codex 创作课](https://ai-zaowushe-codex-course.pages.dev/)
 - [AI造物社 Eazo 首作课](https://ai-zaowushe-creator-course.pages.dev/)
 - [ZONE Design](https://zone-design.tlabel-optimus-workbench-clone.workers.dev/)
